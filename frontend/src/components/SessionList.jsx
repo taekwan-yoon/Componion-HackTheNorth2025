@@ -189,7 +189,7 @@ const SessionList = ({ onJoinSession, onCreateSession }) => {
           {/* Left side - Image */}
           <div className="landing-image">
             <img
-              src="https://via.placeholder.com/400x300/6366f1/ffffff?text=🎬+Componion"
+              src="https://via.placeholder.com/450x300/f4acb7/ffffff?text=🎬+Componion"
               alt="Componion - Watch Together"
               className="hero-image"
             />
