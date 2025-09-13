@@ -1,0 +1,80 @@
+@startuml system_overview
+!theme plain
+title Componion - Video Study Assistant System Overview
+
+package "Frontend (React)" {
+  [SessionList] as SL
+  [SessionRoom] as SR
+  [MasterSessionRoom] as MSR
+  [VideoPlayer] as VP
+  [ChatBox] as CB
+  [VideoProcessingStatus] as VPS
+  [UserList] as UL
+}
+
+package "Backend (Flask + SocketIO)" {
+  [Flask App] as FA
+  [API Routes] as AR
+  [Socket Events] as SE
+  [PromptConstructor] as PC
+  [ContextAgent] as CA
+  [VideoPreprocessor] as VPP
+}
+
+package "External APIs" {
+  [Gemini API] as GA
+  [TMDB API] as TA
+  [YouTube Extractor] as YE
+}
+
+package "Database (PostgreSQL)" {
+  [sessions]
+  [session_users]
+  [chat_messages]
+  [video_analysis]
+  [tv_show_info]
+  [video_processing_status]
+}
+
+' Frontend Connections
+SL --> AR : REST API
+SR --> SE : WebSocket
+MSR --> SE : WebSocket
+VP --> YE : Video URL
+CB --> SE : Chat Messages
+VPS --> AR : Processing Status
+
+' Backend Internal Connections
+FA --> AR : Blueprint
+FA --> SE : SocketIO
+AR --> PC : AI Questions
+PC --> CA : Context Enhancement
+PC --> GA : LLM Inference
+CA --> GA : Decision Making
+CA --> TA : Enhanced Context
+SE --> AR : Message Storage
+VPP --> YE : Video Processing
+VPP --> GA : Content Analysis
+
+' Database Connections
+AR --> [sessions] : CRUD
+AR --> [session_users] : CRUD
+AR --> [chat_messages] : CRUD
+AR --> [video_analysis] : CRUD
+AR --> [tv_show_info] : CRUD
+AR --> [video_processing_status] : CRUD
+SE --> [session_users] : User Management
+SE --> [chat_messages] : Real-time Chat
+
+' External API Connections
+GA --> "Google Gemini" : AI Processing
+TA --> "TMDB Database" : Movie/TV Data
+YE --> "YouTube API" : Video Extraction
+
+note right of CA : "Intelligent agent that decides\nwhat additional context\nto fetch from TMDB based\non user questions"
+
+note right of PC : "Constructs AI prompts with\nvideo context, chat history,\nand enhanced TMDB data"
+
+note bottom of VPP : "Processes YouTube videos:\n- Extracts audio/screenshots\n- Generates transcripts\n- Analyzes content"
+
+@enduml

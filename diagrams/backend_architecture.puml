@@ -1,0 +1,83 @@
+@startuml backend_architecture
+!theme plain
+title Componion - Backend Architecture (Flask + SocketIO)
+
+package "Flask Application" {
+  [app.py] --> [Flask App]
+  [Flask App] --> [CORS Configuration]
+  [Flask App] --> [SocketIO Server]
+}
+
+package "API Layer" {
+  [API Blueprint] 
+  [routes.py]
+}
+
+package "WebSocket Layer" {
+  [Socket Events]
+  [socket_events.py]
+}
+
+package "Core Services" {
+  [PromptConstructor]
+  [ContextAgent] 
+  [VideoPreprocessor]
+}
+
+package "External APIs" {
+  [GeminiAPI]
+  [TMDBAPI]
+  [YoutubeExtractor]
+}
+
+package "Database Layer" {
+  [Models]
+  [Database Engine]
+}
+
+package "Utilities" {
+  [Name Generator]
+}
+
+' Application Setup
+[Flask App] --> [API Blueprint] : register_blueprint
+[Flask App] --> [Socket Events] : init_socket_events
+[Flask App] --> [Database Engine] : SQLAlchemy
+
+' API Routes
+[API Blueprint] --> [routes.py] : contains
+[routes.py] --> [Models] : database operations
+[routes.py] --> [PromptConstructor] : AI processing
+[routes.py] --> [VideoPreprocessor] : video processing
+
+' Socket Events
+[Socket Events] --> [socket_events.py] : contains
+[socket_events.py] --> [Models] : real-time data
+[socket_events.py] --> [PromptConstructor] : AI chat
+[socket_events.py] --> [Name Generator] : user names
+
+' AI Processing Chain
+[PromptConstructor] --> [ContextAgent] : context enhancement
+[PromptConstructor] --> [GeminiAPI] : LLM inference
+[ContextAgent] --> [GeminiAPI] : decision making
+[ContextAgent] --> [TMDBAPI] : enhanced context
+
+' Video Processing
+[VideoPreprocessor] --> [YoutubeExtractor] : video extraction
+[VideoPreprocessor] --> [GeminiAPI] : content analysis
+[VideoPreprocessor] --> [TMDBAPI] : metadata lookup
+
+' Database Models
+[Models] --> [Database Engine] : PostgreSQL connection
+
+note right of [PromptConstructor] : "Main AI orchestrator:\n• Gathers video context\n• Uses ContextAgent for enhancement\n• Constructs final prompt\n• Manages chat history"
+
+note right of [ContextAgent] : "Intelligent context enhancement:\n• Analyzes user questions\n• Decides what TMDB data to fetch\n• Returns relevant additional context\n• Verbose logging for decisions"
+
+note right of [VideoPreprocessor] : "Video processing pipeline:\n• YouTube video extraction\n• Audio transcription\n• Screenshot analysis\n• Content identification\n• TMDB metadata enrichment"
+
+note right of [API Blueprint] : "REST API endpoints:\n• Session management\n• AI question processing\n• Video processing control\n• Status monitoring"
+
+note right of [Socket Events] : "Real-time events:\n• User management\n• Chat messaging\n• Video synchronization\n• AI responses"
+
+@enduml

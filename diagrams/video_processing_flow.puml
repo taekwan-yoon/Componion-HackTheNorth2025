@@ -1,0 +1,67 @@
+@startuml video_processing_flow
+!theme plain
+title Componion - Video Processing Flow
+
+participant "Master User" as MU
+participant "Frontend" as FE
+participant "API Routes" as API
+participant "VideoPreprocessor" as VP
+participant "YoutubeExtractor" as YE
+participant "Gemini API" as GA
+participant "TMDB API" as TA
+participant "Database" as DB
+
+MU -> FE : Creates session with YouTube URL
+FE -> API : POST /api/sessions
+API -> DB : Create session record
+API -> API : Start background processing thread
+
+par Background Video Processing
+  API -> VP : preprocess_youtube_url(video_url)
+  
+  VP -> DB : Update status to "processing"
+  VP -> YE : extract_audio_and_screenshots()
+  YE -> YE : Download video, extract frames
+  YE --> VP : Audio file + screenshot images
+  
+  VP -> GA : Generate transcript from audio
+  GA --> VP : Timestamped transcript
+  
+  VP -> GA : Analyze screenshots batch
+  GA --> VP : Image descriptions with timestamps
+  
+  VP -> GA : Identify show/movie from content
+  GA --> VP : Show identification
+  
+  VP -> TA : Search for show in TMDB
+  TA --> VP : TMDB metadata
+  
+  VP -> DB : Store video_analysis data\n(transcript, images, show_id)
+  VP -> DB : Store tv_show_info with TMDB data
+  VP -> DB : Update status to "completed"
+end
+
+par Frontend Status Polling
+  FE -> API : GET /api/video/status/{url}
+  API -> DB : Check processing status
+  DB --> API : Current status & progress
+  API --> FE : Status update
+  
+  FE -> FE : Show progress to user
+  note right : "VideoProcessingStatus component\npolls every 2 seconds until complete"
+end
+
+alt Processing Successful
+  DB -> FE : Status = "completed"
+  FE -> FE : Enable AI chat features
+  FE -> MU : Show "Video ready for AI chat"
+else Processing Failed
+  DB -> FE : Status = "failed" + error
+  FE -> MU : Show error message
+end
+
+note over VP : "Video Processing Steps:\n1. Extract audio + screenshots\n2. Generate transcript with timestamps\n3. Analyze visual content\n4. Identify show/movie\n5. Fetch TMDB metadata\n6. Store all analysis data"
+
+note over FE : "Frontend shows real-time\nprocessing status with\nprogress bar and steps"
+
+@enduml

@@ -1,0 +1,79 @@
+@startuml realtime_communication
+!theme plain
+title Componion - Real-time Communication (WebSocket)
+
+participant "Master User" as MU
+participant "Participant User" as PU
+participant "Master Frontend" as MFE
+participant "Participant Frontend" as PFE
+participant "SocketIO Server" as SIO
+participant "Database" as DB
+
+== Session Creation & Joining ==
+
+MU -> MFE : Creates master session
+MFE -> SIO : join_session(session_id, is_master=true)
+SIO -> DB : Add user to session_users
+SIO -> MFE : join_confirmed + session data
+
+PU -> PFE : Joins session
+PFE -> SIO : join_session(session_id, is_master=false)
+SIO -> DB : Add participant to session_users
+SIO -> PFE : join_confirmed
+SIO -> MFE : user_joined event
+SIO -> PFE : session_users list
+
+== Real-time Chat ==
+
+PU -> PFE : Types message
+PFE -> SIO : send_message(message, video_timestamp)
+SIO -> DB : Store chat message
+
+alt Message contains AI trigger
+  SIO -> SIO : Detect @componion or AI keywords
+  SIO -> "PromptConstructor" : construct_prompt()
+  "PromptConstructor" -> "Gemini API" : Generate response
+  "Gemini API" --> SIO : AI response
+  SIO -> DB : Store AI message
+  SIO -> MFE : new_message (AI response)
+  SIO -> PFE : new_message (AI response)
+else Regular chat message
+  SIO -> MFE : new_message
+  SIO -> PFE : new_message
+end
+
+== Video Synchronization ==
+
+MU -> MFE : Video playing/seeking
+MFE -> SIO : video_time_update(session_id, time)
+SIO -> PFE : sync_video_time(time, timestamp)
+PFE -> PFE : Sync video player to time
+
+alt Participant requests sync
+  PU -> PFE : Clicks sync button
+  PFE -> SIO : request_current_time(session_id)
+  SIO -> MFE : time_requested(requester_id)
+  MU -> MFE : Current video time
+  MFE -> SIO : send_current_time(requester_id, time)
+  SIO -> PFE : sync_video_time(time)
+end
+
+== User Management ==
+
+alt User disconnects
+  PU -> : Closes browser
+  SIO -> DB : Remove from session_users
+  SIO -> MFE : user_left event
+  SIO -> : Update user lists
+else Master disconnects
+  MU -> : Closes browser
+  SIO -> MFE : master_disconnected
+  SIO -> PFE : master_disconnected
+  SIO -> DB : Deactivate empty sessions
+end
+
+note over SIO : "Socket Events:\n• join_session\n• send_message\n• video_time_update\n• request_current_time\n• user_joined/left\n• new_message\n• sync_video_time"
+
+note over DB : "Real-time data:\n• session_users (ephemeral)\n• chat_messages\n• User presence tracking"
+
+@enduml

@@ -1,0 +1,52 @@
+@startuml ai_context_flow
+!theme plain
+title Componion - AI Context Enhancement Flow
+
+participant "User" as U
+participant "Frontend\n(ChatBox)" as FE
+participant "Backend\n(Socket/API)" as BE
+participant "PromptConstructor" as PC
+participant "ContextAgent" as CA
+participant "Gemini API" as GA
+participant "TMDB API" as TA
+participant "Database" as DB
+
+U -> FE : Asks question about video
+FE -> BE : Send message with video timestamp
+BE -> PC : construct_prompt(question, timestamp)
+
+PC -> DB : Get video analysis data
+DB --> PC : transcript, screenshots, show info
+
+PC -> CA : analyze_and_enhance_context(question, show_info)
+
+CA -> GA : Analyze question intent
+note right : "Determines if question needs:\n- cast info\n- similar shows\n- seasons data\n- production details\n- or none"
+GA --> CA : Returns context type (e.g., "cast")
+
+alt Context type is not "none"
+  CA -> TA : Search for TMDB ID (if needed)
+  TA --> CA : TMDB ID
+  
+  CA -> TA : Fetch specific context\n(cast/similar/seasons/trivia)
+  TA --> CA : Enhanced context data
+  
+  CA --> PC : Formatted additional context
+else Context type is "none"
+  CA --> PC : Empty string
+end
+
+PC -> PC : Combine all context:\n- Video timestamp\n- Show information\n- Video analysis\n- Enhanced TMDB context\n- Chat history
+
+PC --> BE : Complete prompt with context
+
+BE -> GA : Generate AI response
+GA --> BE : AI answer
+
+BE -> DB : Store question & answer
+BE -> FE : Send AI response
+FE -> U : Display answer
+
+note over CA : "🤖 ContextAgent Decision Engine:\n\nAnalyzes user questions to intelligently\nfetch only relevant additional context:\n\n• 'Who plays X?' → fetch cast info\n• 'Similar shows?' → fetch recommendations\n• 'How many seasons?' → fetch season data\n• 'Who created this?' → fetch production info\n• 'What happened here?' → use existing context"
+
+@enduml

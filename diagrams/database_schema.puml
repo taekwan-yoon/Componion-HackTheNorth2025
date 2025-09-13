@@ -1,0 +1,84 @@
+@startuml database_schema
+!theme plain
+title Componion - Database Schema
+
+entity "sessions" {
+  * id : UUID <<PK>>
+  --
+  * name : VARCHAR(255)
+  video_file : VARCHAR(255)
+  video_url : TEXT
+  is_master : BOOLEAN
+  created_at : TIMESTAMP
+  active : BOOLEAN
+}
+
+entity "session_users" {
+  * session_id : UUID <<FK>>
+  * user_id : VARCHAR(100) <<PK>>
+  --
+  * display_name : VARCHAR(100)
+  joined_at : TIMESTAMP
+  last_seen : TIMESTAMP
+}
+
+entity "chat_messages" {
+  * id : UUID <<PK>>
+  --
+  * session_id : UUID <<FK>>
+  * user_id : VARCHAR(100)
+  * message : TEXT
+  message_type : VARCHAR(20)
+  is_ai_directed : BOOLEAN
+  reply_to_message_id : UUID <<FK>>
+  created_at : TIMESTAMP
+}
+
+entity "video_analysis" {
+  * id : BIGSERIAL <<PK>>
+  --
+  * video_id : VARCHAR(255)
+  * model_type : VARCHAR(50)
+  * model_output : JSON
+  timestamp : TIMESTAMP
+}
+
+entity "tv_show_info" {
+  * id : UUID <<PK>>
+  --
+  * video_url : TEXT <<UNIQUE>>
+  * show_type : VARCHAR(50)
+  title : VARCHAR(255)
+  season : INTEGER
+  episode : INTEGER
+  tmdb_id : INTEGER
+  tmdb_data : JSONB
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+}
+
+entity "video_processing_status" {
+  * id : UUID <<PK>>
+  --
+  * video_url : TEXT <<UNIQUE>>
+  session_id : UUID <<FK>>
+  status : VARCHAR(20)
+  progress : INTEGER
+  error_message : TEXT
+  started_at : TIMESTAMP
+  completed_at : TIMESTAMP
+}
+
+' Relationships
+sessions ||--o{ session_users : "has participants"
+sessions ||--o{ chat_messages : "contains messages"
+sessions ||--o{ video_processing_status : "tracks processing"
+chat_messages }o--|| chat_messages : "replies to"
+
+note right of video_analysis : "Stores AI analysis results:\n- transcript\n- image_descriptions\n- show_identification"
+
+note right of tv_show_info : "TMDB metadata:\n- Show/movie details\n- Cast information\n- Episode data"
+
+note right of video_processing_status : "Tracks video processing:\n- pending → processing\n- → completed/failed\n- Progress percentage"
+
+@enduml

@@ -1,0 +1,77 @@
+@startuml frontend_architecture
+!theme plain
+title Componion - Frontend Architecture (React)
+
+package "App.jsx" {
+  [Router] --> [HomePage]
+  [Router] --> [SessionRoom]
+  [Router] --> [MasterSessionRoom]
+}
+
+package "Components" {
+  [SessionList] 
+  [SessionRoom]
+  [MasterSessionRoom]
+  [VideoPlayer]
+  [ChatBox] 
+  [UserList]
+  [VideoProcessingStatus]
+}
+
+package "Services" {
+  [SocketService] 
+  [API Service]
+}
+
+package "Hooks & State" {
+  [useState]
+  [useEffect]
+  [useParams]
+  [useNavigate]
+}
+
+' Component Relationships
+[HomePage] --> [SessionList] : renders
+[SessionList] --> [API Service] : fetch sessions
+[SessionList] --> [API Service] : create session
+
+[SessionRoom] --> [VideoPlayer] : participant view
+[SessionRoom] --> [ChatBox] : chat interface
+[SessionRoom] --> [UserList] : show participants
+[SessionRoom] --> [SocketService] : real-time updates
+
+[MasterSessionRoom] --> [VideoPlayer] : master controls
+[MasterSessionRoom] --> [ChatBox] : AI chat
+[MasterSessionRoom] --> [UserList] : manage users
+[MasterSessionRoom] --> [VideoProcessingStatus] : video processing
+[MasterSessionRoom] --> [SocketService] : broadcast updates
+
+[VideoPlayer] --> [SocketService] : time updates (master)
+[VideoPlayer] --> [SocketService] : sync requests (participant)
+
+[ChatBox] --> [SocketService] : send messages
+[ChatBox] --> [API Service] : AI questions
+
+[VideoProcessingStatus] --> [API Service] : status polling
+
+' Service Dependencies
+[SocketService] --> "WebSocket Connection" : Socket.IO
+[API Service] --> "REST API" : HTTP requests
+
+' State Management
+[SessionRoom] --> [useState] : session state
+[SessionRoom] --> [useEffect] : socket setup
+[MasterSessionRoom] --> [useState] : master state
+[MasterSessionRoom] --> [useEffect] : master setup
+
+note right of [SessionList] : "Shows active sessions\nAllows creating new sessions\nHandles join/create navigation"
+
+note right of [VideoPlayer] : "Master: Controls playback\nBroadcasts time updates\n\nParticipant: Syncs to master\nRequests current time"
+
+note right of [ChatBox] : "Real-time messaging\nAI question handling\nMessage history display\nVideo timestamp context"
+
+note right of [SocketService] : "Manages WebSocket connection\nHandles all real-time events\nProvides event listeners"
+
+note right of [VideoProcessingStatus] : "Shows processing progress\nPolls status every 2 seconds\nDisplays current step"
+
+@enduml

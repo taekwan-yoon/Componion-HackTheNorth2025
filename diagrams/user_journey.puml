@@ -1,0 +1,102 @@
+@startuml user_journey
+!theme plain
+title Componion - User Journey Flow
+
+|User|
+start
+
+:Visit application homepage;
+
+:View list of active sessions;
+
+if (Create new session?) then (yes)
+  :Enter session name;
+  :Provide YouTube video URL;
+  :Create master session;
+  
+  |System|
+  :Start video processing in background;
+  :Extract audio and screenshots;
+  :Generate transcript with AI;
+  :Analyze visual content;
+  :Identify show/movie;
+  :Fetch TMDB metadata;
+  :Mark processing complete;
+  
+  |User|
+  :Navigate to master session room;
+  :See video processing status;
+  
+  if (Processing complete?) then (no)
+    :Wait for processing;
+    :See progress updates;
+  else (yes)
+    :Video player becomes available;
+  endif
+  
+else (no)
+  :Select existing session;
+  :Join as participant;
+  
+  |System|
+  :Add user to session;
+  :Send chat history;
+  :Send current user list;
+  
+  |User|
+  :Navigate to session room;
+endif
+
+:Video player loads;
+
+if (Master user?) then (yes)
+  :Control video playback;
+  :Broadcast time updates to participants;
+else (no)
+  :Receive time sync from master;
+  :Request sync if needed;
+endif
+
+:Chat interface available;
+
+while (Using session?) is (yes)
+  :Type message in chat;
+  
+  if (Message for AI?) then (yes)
+    :Include @componion or AI keywords;
+    
+    |System|
+    :ContextAgent analyzes question;
+    :Decides what additional context needed;
+    :Fetches relevant TMDB data if needed;
+    :PromptConstructor builds full prompt;
+    :Gemini API generates response;
+    :Store question and answer;
+    
+    |User|
+    :Receive AI response in chat;
+    :See video timestamp context;
+    :Get enhanced show information;
+  else (no)
+    :Regular chat message;
+    :Other users see message;
+  endif
+  
+  :Continue watching video;
+  :Ask questions about content;
+  :Interact with other users;
+endwhile (no)
+
+:Leave session;
+
+|System|
+:Remove user from session;
+:Notify other users;
+:Clean up empty sessions;
+
+|User|
+stop
+
+note right : "Key Features:\n\n• Real-time video synchronization\n• AI-powered content analysis\n• Intelligent context enhancement\n• Multi-user chat with AI assistant\n• Automatic show/movie identification\n• Enhanced metadata from TMDB"
+
+@enduml
