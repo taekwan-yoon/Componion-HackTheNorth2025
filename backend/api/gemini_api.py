@@ -18,12 +18,12 @@ class GeminiAPI:
 
         # Initialize models
         # LLM (text2text)
-        self.text_model = genai.GenerativeModel('gemini-2.5-flash')
-        print("Initialized text model: gemini-2.5-flash")
+        self.text_model = genai.GenerativeModel('gemini-1.5-flash')
+        print("Initialized text model: gemini-1.5-flash")
 
         # image2text
-        self.vision_model = genai.GenerativeModel('gemini-2.5-flash')
-        print("Initialized vision model: gemini-2.5-flash")
+        self.vision_model = genai.GenerativeModel('gemini-1.5-flash')
+        print("Initialized vision model: gemini-1.5-flash")
 
     def image2text(self, image_path: str, prompt: str) -> str:
         print(f"Analyzing image: {image_path}...")

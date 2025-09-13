@@ -1,4 +1,5 @@
 from core import ChatMessage, VideoAnalysis, TVShowInfo
+from .ContextAgent import ContextAgent
 import json
 
 
@@ -6,6 +7,7 @@ class PromptConstructor:
   def __init__(self, video_url: str, session_id: str):
     self.video_url = video_url
     self.session_id = session_id
+    self.context_agent = ContextAgent(verbose=True)
   
   def _transcript_to_text(self, transcript_data) -> str:
     """Parse transcript data and convert to readable text format"""
@@ -184,6 +186,11 @@ class PromptConstructor:
       tv_show_context = self._tv_show_info_to_text(tv_show_info)
       if tv_show_context:
         context_parts.append(f"\n--- Content Information ---\n{tv_show_context}")
+      
+      # Get enhanced context based on user's question using ContextAgent
+      enhanced_context = self.context_agent.analyze_and_enhance_context(user_message, tv_show_info)
+      if enhanced_context:
+        context_parts.append(f"\n--- Additional Context ---\n{enhanced_context}")
     
     # Add video timestamp context
     if video_timestamp > 0:
@@ -209,13 +216,15 @@ class PromptConstructor:
 
     context = "\n".join(context_parts)
 
-    prompt = f"""You are an AI assistant for a video viewing application. Use the following context from the video and prior chat messages to answer the user's question.
+    prompt = f"""You are a friendly AI companion helping users enjoy their video watching experience! 🎬 
+
+Be conversational, enthusiastic, and keep your responses concise and easy to read. Use the video context and any additional show information to give helpful, personalized answers.
 
 Context:
 {context}
 
 User Question: {user_message}
 
-Please provide a helpful and accurate response based on the video content and context provided."""
+Give a friendly, brief response that directly answers their question using the video content and show information above. Keep it casual and engaging! 😊"""
 
     return prompt
