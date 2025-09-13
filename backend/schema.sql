@@ -122,18 +122,3 @@ BEGIN
     END IF;
 END $$;
 
-CREATE TABLE IT NOT EXISTS video_processing_status (
-    id UUID PRIMARY KEY,
-    video_url TEXT UNIQUE NOT NULL,
-    session_id UUID NOT NULL,
-    status VARCHAR(20) NOT NULL DEFAULT 'pending',
-    progress INTEGER DEFAULT 0,
-    error_message TEXT,
-    started_at TIMESTAMP,
-    completed_at TIMESTAMP,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Add index for faster lookups
-CREATE INDEX idx_video_processing_status_video_url ON video_processing_status(video_url);
-CREATE INDEX idx_video_processing_status_status ON video_processing_status(status);
