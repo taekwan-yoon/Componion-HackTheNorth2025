@@ -4,10 +4,21 @@ import glob
 from typing import Tuple, List, Dict, Any
 from youtube.scripts.YoutubeExtractor import YoutubeExtractor
 from api import GeminiAPI
+from api.tmdb_api import TMDBAPI
 from core import VideoAnalysis
+from core.models import TVShowInfo
 
 
 class VideoPreprocessor:
+    """
+    VideoPreprocessor handles the extraction and analysis of YouTube videos.
+    
+    Recent Updates:
+    - Refactored _process_screenshots to batch multiple images in a single Gemini API call
+    - Added describe_screenshots() wrapper for detailed screenshot descriptions
+    - Added identify_show_from_screenshots() wrapper for TV show identification
+    - Updated main preprocessing flow to use the new batched approach
+    """
     def __init__(self):
         """Initialize the VideoPreprocessor with necessary components."""
         self.gemini_api = None
@@ -60,66 +71,309 @@ class VideoPreprocessor:
             
         return transcript_json
     
-    def _process_screenshots(self, screenshot_dir: str, video_id: str, progress_callback=None) -> List[Dict[str, Any]]:
+    def _process_screenshots(
+        self,
+        screenshot_dir: str,
+        video_id: str,
+        prompt: str,
+        progress_callback=None
+    ) -> Dict[str, Any]:
         """
-        Process all screenshots using Gemini API image2text.
+        Process multiple screenshots together using Gemini API (single call).
         
         Args:
             screenshot_dir: Directory containing screenshots
             video_id: Video ID for filtering files
+            prompt: Prompt to send to Gemini
+            progress_callback: Optional progress update callback
             
         Returns:
-            List of dictionaries with screenshot info and descriptions
+            Dictionary with video_id, filenames, and Gemini's combined response
         """
-        image_descriptions = []
-        
         # Find all screenshot files for this video
         screenshot_pattern = os.path.join(screenshot_dir, f"{video_id}_screenshot_*.jpg")
         screenshot_files = sorted(glob.glob(screenshot_pattern))
         
         if not screenshot_files:
             print(f"No screenshots found for video {video_id}")
-            return image_descriptions
+            return {"video_id": video_id, "filenames": [], "response": None}
         
-        print(f"Processing {len(screenshot_files)} screenshots...")
+        print(f"Processing {len(screenshot_files)} screenshots in one Gemini call...")
+
+        try:
+            # Progress update before sending to Gemini
+            if progress_callback:
+                progress_callback(80, f"Sending {len(screenshot_files)} screenshots to Gemini...")
+
+            # Call Gemini API with multiple images in one request
+            response = self.gemini_api.images2text(screenshot_files, prompt)
+
+            if progress_callback:
+                progress_callback(85, f"Processed all screenshots for {video_id}")
+
+            return {
+                "video_id": video_id,
+                "filenames": [os.path.basename(f) for f in screenshot_files],
+                "response": response
+            }
+
+        except Exception as e:
+            print(f"Error processing screenshots for video {video_id}: {e}")
+            return {"video_id": video_id, "filenames": [], "response": None}
+
+    def describe_screenshots(self, screenshot_dir: str, video_id: str, progress_callback=None):
+        """
+        Describe screenshots in detail: subjects, actions, text, and composition.
+        Returns individual descriptions with timestamps like the original format.
+        """
+        # Find all screenshot files for this video
+        screenshot_pattern = os.path.join(screenshot_dir, f"{video_id}_screenshot_*.jpg")
+        screenshot_files = sorted(glob.glob(screenshot_pattern))
         
-        for i, screenshot_path in enumerate(screenshot_files):
+        if not screenshot_files:
+            print(f"No screenshots found for video {video_id}")
+            return {"video_id": video_id, "descriptions": []}
+        
+        print(f"Processing {len(screenshot_files)} screenshots with individual descriptions...")
+
+        # Create a prompt that asks for individual descriptions in a structured format
+        prompt = (
+            "Analyze these screenshots from a TV show or video. For each image, provide a detailed description "
+            "focusing on main subjects, their names if recognizable, their actions, visible text, and overall scene composition. "
+            "Return your response as a JSON array where each element corresponds to one screenshot in order, with this structure: "
+            "[{\"description\": \"detailed description of first image\"}, {\"description\": \"detailed description of second image\"}, ...]"
+        )
+
+        try:
+            # Progress update before sending to Gemini
+            if progress_callback:
+                progress_callback(80, f"Sending {len(screenshot_files)} screenshots to Gemini for individual descriptions...")
+
+            # Call Gemini API with multiple images in one request
+            response = self.gemini_api.images2text(screenshot_files, prompt)
+
+            if progress_callback:
+                progress_callback(85, f"Processing descriptions for {video_id}")
+
+            # Parse the response to extract individual descriptions
+            descriptions = []
             try:
-                # Extract timestamp from filename
-                filename = os.path.basename(screenshot_path)
-                # Format: {video_id}_screenshot_{seconds:04}.jpg
-                timestamp_str = filename.split('_screenshot_')[1].split('.')[0]
-                seconds = int(timestamp_str)
+                import re
                 
-                # Convert seconds to MM:SS format
-                minutes, secs = divmod(seconds, 60)
-                timestamp = f"{minutes:02d}:{secs:02d}"
-                
-                # Update progress during screenshot processing
-                if progress_callback and len(screenshot_files) > 0:
-                    # Progress from 75% to 85% during screenshot processing
-                    screenshot_progress = 75 + (10 * (i + 1) / len(screenshot_files))
-                    progress_callback(int(screenshot_progress), f"Processing screenshot {i + 1}/{len(screenshot_files)}")
-                
-                # Process image with Gemini API
-                prompt = "Describe this screenshot from a TV Show in detail. Focus on the main subjects and find out their names, actions, text visible, and overall scene composition. Consider the context of the show. Use the internet"
-                description = self.gemini_api.image2text(screenshot_path, prompt)
-                
-                image_descriptions.append({
-                    "timestamp": timestamp,
-                    "seconds": seconds,
-                    "filename": filename,
-                    "description": description
-                })
-                
-                print(f"Processed screenshot at {timestamp}")
-                
-            except Exception as e:
-                print(f"Error processing screenshot {screenshot_path}: {e}")
-                # Continue processing other screenshots
-                continue
+                # Try to extract JSON array from response
+                json_match = re.search(r'\[.*\]', response, re.DOTALL)
+                if json_match:
+                    parsed_descriptions = json.loads(json_match.group())
+                    
+                    # Create the timestamp-based format
+                    for i, screenshot_file in enumerate(screenshot_files):
+                        filename = os.path.basename(screenshot_file)
+                        
+                        # Extract timestamp from filename (e.g., "video_screenshot_0030.jpg" -> 30 seconds)
+                        timestamp_match = re.search(r'_(\d{4})\.jpg$', filename)
+                        if timestamp_match:
+                            seconds = int(timestamp_match.group(1))
+                            minutes = seconds // 60
+                            seconds_remainder = seconds % 60
+                            timestamp = f"{minutes:02d}:{seconds_remainder:02d}"
+                        else:
+                            # Fallback: assume 10-second intervals
+                            seconds = i * 10
+                            minutes = seconds // 60
+                            seconds_remainder = seconds % 60
+                            timestamp = f"{minutes:02d}:{seconds_remainder:02d}"
+                        
+                        # Get description for this image (if available)
+                        description_text = ""
+                        if i < len(parsed_descriptions) and "description" in parsed_descriptions[i]:
+                            description_text = parsed_descriptions[i]["description"]
+                        else:
+                            description_text = f"Description not available for image {i+1}"
+                        
+                        descriptions.append({
+                            "timestamp": timestamp,
+                            "seconds": seconds if timestamp_match else i * 10,
+                            "filename": filename,
+                            "description": description_text
+                        })
+                else:
+                    # Fallback: split response by common separators and assign to images
+                    print("Could not parse JSON from response, attempting to split descriptions...")
+                    
+                    # Try to split the response into parts
+                    parts = re.split(r'\n\n+|\d+\.\s+|Image \d+:', response)
+                    parts = [part.strip() for part in parts if part.strip()]
+                    
+                    for i, screenshot_file in enumerate(screenshot_files):
+                        filename = os.path.basename(screenshot_file)
+                        
+                        # Extract timestamp from filename
+                        timestamp_match = re.search(r'_(\d{4})\.jpg$', filename)
+                        if timestamp_match:
+                            seconds = int(timestamp_match.group(1))
+                            minutes = seconds // 60
+                            seconds_remainder = seconds % 60
+                            timestamp = f"{minutes:02d}:{seconds_remainder:02d}"
+                        else:
+                            seconds = i * 10
+                            minutes = seconds // 60
+                            seconds_remainder = seconds % 60
+                            timestamp = f"{minutes:02d}:{seconds_remainder:02d}"
+                        
+                        # Get description for this image
+                        description_text = parts[i] if i < len(parts) else f"Description not available for {filename}"
+                        
+                        descriptions.append({
+                            "timestamp": timestamp,
+                            "seconds": seconds if timestamp_match else i * 10,
+                            "filename": filename,
+                            "description": description_text
+                        })
+                        
+            except (json.JSONDecodeError, Exception) as e:
+                print(f"Error parsing individual descriptions: {e}")
+                # Ultimate fallback: create basic structure
+                for i, screenshot_file in enumerate(screenshot_files):
+                    filename = os.path.basename(screenshot_file)
+                    seconds = i * 10
+                    minutes = seconds // 60
+                    seconds_remainder = seconds % 60
+                    timestamp = f"{minutes:02d}:{seconds_remainder:02d}"
+                    
+                    descriptions.append({
+                        "timestamp": timestamp,
+                        "seconds": seconds,
+                        "filename": filename,
+                        "description": f"Could not process description for {filename}"
+                    })
+
+            return {
+                "video_id": video_id,
+                "descriptions": descriptions,
+                "raw_response": response  # Keep the raw response for debugging
+            }
+
+        except Exception as e:
+            print(f"Error processing screenshots for video {video_id}: {e}")
+            return {"video_id": video_id, "descriptions": [], "error": str(e)}
+
+    def identify_show_from_screenshots(self, screenshot_dir: str, video_id: str, progress_callback=None):
+        """
+        Try to identify the TV show from screenshots.
+        Note: It may not be a TV show at all (could be a movie, ad, or something else).
+        """
+        prompt = (
+            "These are multiple screenshots from a video. Identify if this is a TV show. "
+            "If yes, provide the show's title and, if possible, the season and episode. "
+            "If it's not a TV show, say clearly what it most likely is (e.g., a movie, commercial, YouTube video, etc.). "
+            "Return your answer in JSON: {\"type\": \"TV Show/Movie/Other\", \"title\": \"...\", \"season\": ..., \"episode\": ...}."
+        )
+        return self._process_screenshots(screenshot_dir, video_id, prompt, progress_callback)
+    
+    def _process_show_identification_with_tmdb(self, youtube_url: str, show_identification_result: Dict[str, Any]) -> bool:
+        """
+        Process show identification result and fetch TMDB data if it's a TV show or movie.
         
-        return image_descriptions
+        Args:
+            youtube_url: The YouTube URL
+            show_identification_result: Result from identify_show_from_screenshots
+            
+        Returns:
+            True if processing was successful, False otherwise
+        """
+        try:
+            response = show_identification_result.get("response", "")
+            if not response:
+                print("No show identification response to process")
+                return False
+            
+            # Try to parse JSON from the response
+            try:
+                # Look for JSON in the response
+                import re
+                json_match = re.search(r'\{.*\}', response, re.DOTALL)
+                if json_match:
+                    show_data = json.loads(json_match.group())
+                else:
+                    # If no JSON found, create a basic structure
+                    show_data = {
+                        "type": "Other",
+                        "title": None,
+                        "season": None,
+                        "episode": None
+                    }
+                    print("No JSON found in show identification response, using default structure")
+            except json.JSONDecodeError:
+                print("Failed to parse JSON from show identification response")
+                show_data = {
+                    "type": "Other", 
+                    "title": None,
+                    "season": None,
+                    "episode": None
+                }
+            
+            show_type = show_data.get("type", "Other")
+            title = show_data.get("title")
+            season = show_data.get("season")
+            episode = show_data.get("episode")
+            
+            print(f"Identified content: Type={show_type}, Title={title}, Season={season}, Episode={episode}")
+            
+            # Initialize TMDB data variables
+            tmdb_id = None
+            tmdb_data = None
+            
+            # If it's a TV show or movie with a title, try to get TMDB data
+            if title and show_type.lower() in ["tv show", "movie"]:
+                try:
+                    print(f"Searching TMDB for {show_type}: {title}")
+                    tmdb_api = TMDBAPI()
+                    
+                    content_type = "tv" if "tv" in show_type.lower() else "movie"
+                    tmdb_result = tmdb_api.search_and_get_best_match(title, content_type)
+                    
+                    if tmdb_result:
+                        tmdb_id = tmdb_result.get("id")
+                        tmdb_data = json.dumps(tmdb_result)
+                        print(f"✅ Found TMDB data for {title} (ID: {tmdb_id})")
+                        
+                        # If it's a TV show and we have season/episode info, get episode details
+                        if content_type == "tv" and season and episode and tmdb_id:
+                            try:
+                                episode_details = tmdb_api.get_tv_episode_details(tmdb_id, int(season), int(episode))
+                                if episode_details:
+                                    # Add episode details to TMDB data
+                                    combined_data = {
+                                        "show_info": tmdb_result,
+                                        "episode_info": episode_details
+                                    }
+                                    tmdb_data = json.dumps(combined_data)
+                                    print(f"✅ Found episode details for S{season}E{episode}")
+                            except (ValueError, TypeError) as e:
+                                print(f"Error getting episode details: {e}")
+                    else:
+                        print(f"❌ No TMDB data found for {title}")
+                        
+                except Exception as e:
+                    print(f"Error fetching TMDB data: {e}")
+            
+            # Save to TV show info database
+            TVShowInfo.create(
+                video_url=youtube_url,
+                show_type=show_type,
+                title=title,
+                season=season,
+                episode=episode,
+                tmdb_id=tmdb_id,
+                tmdb_data=tmdb_data
+            )
+            
+            print(f"✅ Saved TV show information to database")
+            return True
+            
+        except Exception as e:
+            print(f"Error processing show identification with TMDB: {e}")
+            return False
     
     def _cleanup_generated_files(self, video_id: str) -> None:
         """
@@ -273,25 +527,58 @@ class VideoPreprocessor:
                     if progress_callback:
                         progress_callback(75, "Processing screenshots with AI...")
                     
-                    # Process screenshots with Gemini API
-                    image_descriptions = self._process_screenshots(
+                    # Process screenshots with Gemini API - both description and show identification
+                    screenshot_description = self.describe_screenshots(
                         self.youtube_extractor.get_screenshot_path(),
                         video_id,
                         progress_callback
                     )
                     
-                    if image_descriptions:
+                    # Also identify if this is a TV show
+                    show_identification = self.identify_show_from_screenshots(
+                        self.youtube_extractor.get_screenshot_path(),
+                        video_id,
+                        progress_callback
+                    )
+                    
+                    screenshots_processed = False
+                    
+                    if screenshot_description and screenshot_description.get("descriptions"):
                         if progress_callback:
-                            progress_callback(90, "Saving image analysis to database...")
-                        # Save to database as single JSON array
+                            progress_callback(88, "Saving image descriptions to database...")
+                        # Save screenshot descriptions to database - use the descriptions array
                         VideoAnalysis.create(
                             video_id=youtube_url,
                             model_type="image_descriptions",
-                            model_output=json.dumps(image_descriptions)
+                            model_output=json.dumps(screenshot_description.get("descriptions", []))
                         )
                         processed_components.append("image_descriptions")
-                        print(f"✅ {len(image_descriptions)} image descriptions processed and saved")
-                    else:
+                        screenshots_processed = True
+                        print(f"✅ {len(screenshot_description.get('descriptions', []))} screenshots described and saved")
+                    
+                    if show_identification and show_identification.get("response"):
+                        if progress_callback:
+                            progress_callback(90, "Saving show identification to database...")
+                        # Save show identification to database
+                        VideoAnalysis.create(
+                            video_id=youtube_url,
+                            model_type="show_identification",
+                            model_output=json.dumps(show_identification)
+                        )
+                        processed_components.append("show_identification")
+                        screenshots_processed = True
+                        print(f"✅ Show identification processed and saved")
+                        
+                        # Process with TMDB to get additional show information
+                        if progress_callback:
+                            progress_callback(92, "Fetching additional show information from TMDB...")
+                        
+                        tmdb_success = self._process_show_identification_with_tmdb(youtube_url, show_identification)
+                        if tmdb_success:
+                            processed_components.append("tmdb_enrichment")
+                            print(f"✅ TMDB enrichment completed")
+                    
+                    if not screenshots_processed:
                         errors.append("No screenshots were successfully processed")
                 else:
                     errors.append("Failed to extract screenshots")

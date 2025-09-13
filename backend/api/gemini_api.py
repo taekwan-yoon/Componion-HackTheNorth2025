@@ -18,12 +18,12 @@ class GeminiAPI:
 
         # Initialize models
         # LLM (text2text)
-        self.text_model = genai.GenerativeModel('gemini-1.5-flash')
-        print("Initialized text model: gemini-1.5-flash")
+        self.text_model = genai.GenerativeModel('gemini-2.5-flash')
+        print("Initialized text model: gemini-2.5-flash")
 
         # image2text
-        self.vision_model = genai.GenerativeModel('gemini-1.5-flash')
-        print("Initialized vision model: gemini-1.5-flash")
+        self.vision_model = genai.GenerativeModel('gemini-2.5-flash')
+        print("Initialized vision model: gemini-2.5-flash")
 
     def image2text(self, image_path: str, prompt: str) -> str:
         print(f"Analyzing image: {image_path}...")
@@ -42,6 +42,51 @@ class GeminiAPI:
             return f"Error during image analysis: {str(e)}"
 
         return response.text
+
+    def images2text(self, image_paths: list, prompt: str) -> str:
+        """
+        Analyze multiple images in a single API call.
+        
+        Args:
+            image_paths: List of paths to image files
+            prompt: Text prompt for analysis
+            
+        Returns:
+            Combined analysis response from Gemini
+        """
+        print(f"Analyzing {len(image_paths)} images together...")
+
+        if not image_paths:
+            return "Error: No image paths provided."
+
+        try:
+            # Load all images
+            images = []
+            for image_path in image_paths:
+                try:
+                    img = Image.open(image_path)
+                    images.append(img)
+                except FileNotFoundError:
+                    print(f"Warning: File '{image_path}' not found, skipping...")
+                    continue
+                except Exception as e:
+                    print(f"Warning: Error loading '{image_path}': {e}, skipping...")
+                    continue
+            
+            if not images:
+                return "Error: No valid images could be loaded."
+            
+            # Build content array: [prompt, image1, image2, ...]
+            content = [prompt] + images
+            
+            # Call API with multiple images
+            response = self.vision_model.generate_content(content)
+            
+            print(f"Successfully analyzed {len(images)} images")
+            return response.text
+            
+        except Exception as e:
+            return f"Error during multi-image analysis: {str(e)}"
 
     def audio2text(self, audio_path: str, prompt: str):
         # TODO: Gemini API doesn't provide the option to put timestamps unless we use google-cloud-speech

@@ -53,6 +53,40 @@ CREATE TABLE IF NOT EXISTS video_analysis (
 -- Create the index for video_analysis
 CREATE INDEX IF NOT EXISTS idx_video_id ON video_analysis(video_id);
 
+-- TV Show Information Table
+CREATE TABLE IF NOT EXISTS tv_show_info (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    video_url TEXT UNIQUE NOT NULL,
+    show_type VARCHAR(50) NOT NULL, -- 'TV Show', 'Movie', 'Other', etc.
+    title VARCHAR(255),
+    season INTEGER,
+    episode INTEGER,
+    tmdb_id INTEGER, -- The Movie Database ID
+    tmdb_data JSONB, -- Full TMDB response data
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create index for tv_show_info
+CREATE INDEX IF NOT EXISTS idx_tv_show_info_video_url ON tv_show_info(video_url);
+CREATE INDEX IF NOT EXISTS idx_tv_show_info_tmdb_id ON tv_show_info(tmdb_id);
+
+-- Video Processing Status Table
+CREATE TABLE IF NOT EXISTS video_processing_status (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    video_url TEXT UNIQUE NOT NULL,
+    session_id UUID REFERENCES sessions(id),
+    status VARCHAR(20) DEFAULT 'pending', -- 'pending', 'processing', 'completed', 'failed'
+    progress INTEGER DEFAULT 0, -- 0-100
+    error_message TEXT,
+    started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    completed_at TIMESTAMP
+);
+
+-- Create index for video_processing_status
+CREATE INDEX IF NOT EXISTS idx_video_processing_status_video_url ON video_processing_status(video_url);
+CREATE INDEX IF NOT EXISTS idx_video_processing_status_session_id ON video_processing_status(session_id);
+
 -- Migration: Add new fields to chat_messages table (safe for existing installations)
 DO $$ 
 BEGIN

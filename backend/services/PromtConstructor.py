@@ -1,4 +1,4 @@
-from core import ChatMessage, VideoAnalysis
+from core import ChatMessage, VideoAnalysis, TVShowInfo
 import json
 
 
@@ -39,6 +39,94 @@ class PromptConstructor:
     except (json.JSONDecodeError, KeyError, TypeError) as e:
       return f"Error parsing image descriptions: {e}"
 
+  def _show_identification_to_text(self, show_identification_data) -> str:
+    """Parse show identification data and convert to readable text format"""
+    try:
+      # Handle both JSON string and already parsed data
+      if isinstance(show_identification_data, str):
+        show_identification_data = json.loads(show_identification_data)
+      
+      # Extract the response from the batched format
+      if isinstance(show_identification_data, dict) and "response" in show_identification_data:
+        response = show_identification_data.get("response", "")
+        return f"Content Identification: {response}"
+      else:
+        # Fallback for any other format
+        return f"Content Identification: {str(show_identification_data)}"
+    except (json.JSONDecodeError, TypeError) as e:
+      return f"Error parsing show identification: {e}"
+
+  def _tv_show_info_to_text(self, tv_show_info) -> str:
+    """Convert TV show information to readable text format"""
+    try:
+      if not tv_show_info:
+        return ""
+      
+      parts = []
+      
+      # Basic information
+      show_type = tv_show_info.get('show_type', 'Unknown')
+      title = tv_show_info.get('title')
+      season = tv_show_info.get('season')
+      episode = tv_show_info.get('episode')
+      
+      if title:
+        parts.append(f"Content Type: {show_type}")
+        parts.append(f"Title: {title}")
+        
+        if season and episode:
+          parts.append(f"Season {season}, Episode {episode}")
+        elif season:
+          parts.append(f"Season {season}")
+      
+      # TMDB data if available
+      tmdb_data = tv_show_info.get('tmdb_data')
+      if tmdb_data:
+        try:
+          tmdb_info = json.loads(tmdb_data) if isinstance(tmdb_data, str) else tmdb_data
+          
+          # Handle combined show and episode data
+          if "show_info" in tmdb_info and "episode_info" in tmdb_info:
+            show_info = tmdb_info["show_info"]
+            episode_info = tmdb_info["episode_info"]
+            
+            # Show information
+            if show_info.get('overview'):
+              parts.append(f"Show Overview: {show_info['overview']}")
+            if show_info.get('genres'):
+              genres = [g['name'] for g in show_info['genres']]
+              parts.append(f"Genres: {', '.join(genres)}")
+            if show_info.get('first_air_date'):
+              parts.append(f"First Aired: {show_info['first_air_date']}")
+            
+            # Episode information
+            if episode_info.get('name'):
+              parts.append(f"Episode Title: {episode_info['name']}")
+            if episode_info.get('overview'):
+              parts.append(f"Episode Overview: {episode_info['overview']}")
+            if episode_info.get('air_date'):
+              parts.append(f"Episode Air Date: {episode_info['air_date']}")
+              
+          else:
+            # Single content (show or movie)
+            if tmdb_info.get('overview'):
+              parts.append(f"Overview: {tmdb_info['overview']}")
+            if tmdb_info.get('genres'):
+              genres = [g['name'] for g in tmdb_info['genres']]
+              parts.append(f"Genres: {', '.join(genres)}")
+            if tmdb_info.get('first_air_date'):
+              parts.append(f"First Aired: {tmdb_info['first_air_date']}")
+            elif tmdb_info.get('release_date'):
+              parts.append(f"Release Date: {tmdb_info['release_date']}")
+              
+        except (json.JSONDecodeError, TypeError, KeyError) as e:
+          parts.append(f"Additional information available (parsing error: {e})")
+      
+      return "\n".join(parts) if parts else ""
+      
+    except Exception as e:
+      return f"Error parsing TV show information: {e}"
+
   def _session_messages_to_text(self, messages: list) -> str:
     formatted_messages = []
     for msg in messages:
@@ -52,6 +140,9 @@ class PromptConstructor:
       return self._transcript_to_text(model_output)
     elif model_type == "image_descriptions":
       return self._image_descriptions_to_text(model_output)
+    elif model_type == "show_identification":
+      return self._show_identification_to_text(model_output)
+    return ""
     return ""
 
   def construct_prompt(self, user_message: str, video_timestamp: int = 0) -> str:
@@ -74,6 +165,9 @@ class PromptConstructor:
     # Get video analysis data
     video_analysis = VideoAnalysis.get_by_video_url(self.video_url)
 
+    # Get TV show information if available
+    tv_show_info = TVShowInfo.get_by_video_url(self.video_url)
+
     # Verify that all expected video analysis data is present
     required_model_types = ["transcript", "image_descriptions"]
     found_model_types = [va['model_type'] for va in video_analysis]
@@ -84,6 +178,12 @@ class PromptConstructor:
 
     # Process video analysis data
     context_parts = []
+
+    # Add TV show information first if available
+    if tv_show_info:
+      tv_show_context = self._tv_show_info_to_text(tv_show_info)
+      if tv_show_context:
+        context_parts.append(f"\n--- Content Information ---\n{tv_show_context}")
     
     # Add video timestamp context
     if video_timestamp > 0:

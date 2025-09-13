@@ -406,3 +406,90 @@ class VideoAnalysis:
                     "model_output": model_output
                 }
             )
+
+class TVShowInfo:
+    @staticmethod
+    def create(video_url, show_type, title, season=None, episode=None, tmdb_id=None, tmdb_data=None):
+        """Create or update TV show information entry"""
+        tv_show_id = str(uuid.uuid4())
+        
+        with engine.begin() as conn:
+            conn.execute(
+                text("""
+                    INSERT INTO tv_show_info (id, video_url, show_type, title, season, episode, tmdb_id, tmdb_data, created_at)
+                    VALUES (:id, :video_url, :show_type, :title, :season, :episode, :tmdb_id, :tmdb_data, NOW())
+                    ON CONFLICT (video_url) 
+                    DO UPDATE SET 
+                        show_type = EXCLUDED.show_type,
+                        title = EXCLUDED.title,
+                        season = EXCLUDED.season,
+                        episode = EXCLUDED.episode,
+                        tmdb_id = EXCLUDED.tmdb_id,
+                        tmdb_data = EXCLUDED.tmdb_data,
+                        updated_at = CURRENT_TIMESTAMP
+                """),
+                {
+                    "id": tv_show_id,
+                    "video_url": video_url,
+                    "show_type": show_type,
+                    "title": title,
+                    "season": season,
+                    "episode": episode,
+                    "tmdb_id": tmdb_id,
+                    "tmdb_data": tmdb_data
+                }
+            )
+            return tv_show_id
+    
+    @staticmethod
+    def get_by_video_url(video_url):
+        """Get TV show information for a video URL"""
+        with engine.connect() as conn:
+            result = conn.execute(
+                text("""
+                    SELECT id, video_url, show_type, title, season, episode, tmdb_id, tmdb_data, created_at, updated_at
+                    FROM tv_show_info 
+                    WHERE video_url = :video_url
+                """),
+                {"video_url": video_url}
+            ).fetchone()
+            
+            if result:
+                return {
+                    'id': str(result[0]),
+                    'video_url': result[1],
+                    'show_type': result[2],
+                    'title': result[3],
+                    'season': result[4],
+                    'episode': result[5],
+                    'tmdb_id': result[6],
+                    'tmdb_data': result[7],
+                    'created_at': result[8].isoformat() if result[8] else None,
+                    'updated_at': result[9].isoformat() if result[9] else None
+                }
+            return None
+    
+    @staticmethod
+    def get_all():
+        """Get all TV show information entries"""
+        with engine.connect() as conn:
+            results = conn.execute(
+                text("""
+                    SELECT id, video_url, show_type, title, season, episode, tmdb_id, tmdb_data, created_at, updated_at
+                    FROM tv_show_info 
+                    ORDER BY created_at DESC
+                """)
+            ).fetchall()
+            
+            return [{
+                'id': str(row[0]),
+                'video_url': row[1],
+                'show_type': row[2],
+                'title': row[3],
+                'season': row[4],
+                'episode': row[5],
+                'tmdb_id': row[6],
+                'tmdb_data': row[7],
+                'created_at': row[8].isoformat() if row[8] else None,
+                'updated_at': row[9].isoformat() if row[9] else None
+            } for row in results]
