@@ -210,12 +210,11 @@ const MasterSessionRoom = () => {
     <div className="session-room master-session">
       <div className="session-header demo-header">
         <div className="session-title">
-          <h1>🎬 Componion Studio</h1>
-          <span className="demo-subtitle">Interactive Video Learning Platform</span>
+          <h1>Componion</h1>
         </div>
         <div className="session-actions">
           <button onClick={handleLeaveSession} className="leave-button">
-            Exit Studio
+            Exit Session
           </button>
         </div>
       </div>
