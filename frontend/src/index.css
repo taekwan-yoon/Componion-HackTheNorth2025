@@ -47,6 +47,10 @@
   --transition-slow: 0.5s ease-in-out;
 }
 
+html {
+  font-size: 14px; /* Set base font size to scale rem units */
+}
+
 * {
   box-sizing: border-box;
 }

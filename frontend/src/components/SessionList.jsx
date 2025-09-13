@@ -201,9 +201,6 @@ const SessionList = ({ onJoinSession, onCreateSession }) => {
 
           {/* Right side - Action buttons */}
           <div className="landing-actions">
-            <h2>Get Started</h2>
-            <p>Choose how you'd like to begin your video session:</p>
-
             <div className="action-buttons">
               <button
                 className="action-button create-button"
