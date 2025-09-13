@@ -76,11 +76,12 @@
   background: var(--white);
   border: 1px solid var(--platinum);
   border-radius: var(--radius-lg);
-  margin-top: var(--space-xs);
   box-shadow: var(--shadow-xl);
   z-index: 9999;
   min-width: 200px;
-  overflow: hidden;
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .mode-option {
@@ -138,11 +139,12 @@
   background: var(--white);
   border: 1px solid var(--platinum);
   border-radius: var(--radius-lg);
-  margin-top: var(--space-xs);
   box-shadow: var(--shadow-xl);
   z-index: 9999;
   padding: var(--space-lg);
   min-width: 250px;
+  max-height: 400px;
+  overflow-y: auto;
 }
 
 .time-window-header {
@@ -316,4 +318,27 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Scrollbar styling for dropdowns */
+.mode-dropdown::-webkit-scrollbar,
+.time-window-panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+.mode-dropdown::-webkit-scrollbar-track,
+.time-window-panel::-webkit-scrollbar-track {
+  background: var(--platinum);
+  border-radius: var(--radius-full);
+}
+
+.mode-dropdown::-webkit-scrollbar-thumb,
+.time-window-panel::-webkit-scrollbar-thumb {
+  background: var(--cherry-blossom-pink);
+  border-radius: var(--radius-full);
+}
+
+.mode-dropdown::-webkit-scrollbar-thumb:hover,
+.time-window-panel::-webkit-scrollbar-thumb:hover {
+  background: var(--mountbatten-pink);
 }

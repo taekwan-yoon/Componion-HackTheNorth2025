@@ -34,10 +34,19 @@ const QueryModeSelector = ({
   const calculateDropdownPosition = () => {
     if (dropdownRef.current) {
       const rect = dropdownRef.current.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const dropdownHeight = 180; // Approximate height of dropdown
+      
+      // Check if there's enough space below, otherwise position above
+      const shouldOpenUpward = rect.bottom + dropdownHeight > viewportHeight;
+      
       setDropdownPosition({
-        top: rect.bottom + window.scrollY,
+        top: shouldOpenUpward 
+          ? rect.top + window.scrollY - dropdownHeight - 4
+          : rect.bottom + window.scrollY + 4,
         left: rect.left + window.scrollX,
-        width: rect.width
+        width: rect.width,
+        openUpward: shouldOpenUpward
       });
     }
   };
