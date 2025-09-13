@@ -1,0 +1,216 @@
+.session-list {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+.session-list-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.session-list-header h1 {
+  color: #333;
+  margin-bottom: 10px;
+  font-size: 2.5rem;
+}
+
+.session-list-header p {
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.session-list-loading {
+  text-align: center;
+  padding: 60px 20px;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.error-message {
+  background-color: #fee;
+  color: #c33;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #fcc;
+}
+
+.create-session {
+  background: #f8f9fa;
+  padding: 24px;
+  border-radius: 12px;
+  margin-bottom: 40px;
+  border: 1px solid #e9ecef;
+}
+
+.create-session h2 {
+  margin: 0 0 16px 0;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.create-session-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group input {
+  padding: 12px 16px;
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.checkbox-group {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.checkbox-group input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+}
+
+.create-session-form button {
+  padding: 12px 24px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s;
+  align-self: flex-start;
+}
+
+.create-session-form button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.create-session-form button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.sessions-section h2 {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+}
+
+.no-sessions {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+  font-style: italic;
+}
+
+.sessions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.session-card {
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  padding: 20px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.session-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.session-info {
+  margin-bottom: 16px;
+}
+
+.session-name {
+  margin: 0 0 12px 0;
+  color: #333;
+  font-size: 1.25rem;
+  word-break: break-word;
+}
+
+.session-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.user-count {
+  font-weight: 500;
+}
+
+.master-badge {
+  color: #dc3545;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.video-badge {
+  color: #007bff;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.join-button {
+  width: 100%;
+  padding: 12px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.join-button:hover {
+  background-color: #218838;
+}
+
+@media (max-width: 768px) {
+  .session-list {
+    padding: 16px;
+  }
+  
+  .create-session-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .sessions-grid {
+    grid-template-columns: 1fr;
+  }
+}
