@@ -13,11 +13,11 @@ from app import app
 
 if __name__ == '__main__':
     print("Starting HTN 2025 Backend Development Server...")
-    print(f"Server will be available at: http://localhost:{app.config.get('PORT', 5000)}")
+    print(f"Server will be available at: http://localhost:{app.config.get('PORT', 5001)}")
     print("Press Ctrl+C to stop the server")
     
     app.run(
         host='0.0.0.0',
-        port=int(os.getenv('PORT', 5000)),
+        port=int(os.getenv('PORT', 5001)),
         debug=True
     )

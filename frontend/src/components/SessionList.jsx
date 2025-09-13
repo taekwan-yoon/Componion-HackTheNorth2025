@@ -18,7 +18,7 @@ const SessionList = ({ onJoinSession, onCreateSession }) => {
   useEffect(() => {
     fetchSessions();
     // Refresh sessions every 5 seconds
-    const interval = setInterval(fetchSessions, 5000);
+    const interval = setInterval(fetchSessions, 5001);
     return () => clearInterval(interval);
   }, []);
 

@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
 
-const SOCKET_URL = "http://localhost:5000";
+const SOCKET_URL = "http://localhost:5001";
 
 class SocketService {
   constructor() {
@@ -55,9 +55,15 @@ class SocketService {
     }
   }
 
-  sendMessage(message, videoTimestamp = 0) {
+  sendMessage(message, videoTimestamp = 0, queryMode = 'omniscient', startTime = null, endTime = null) {
     if (this.socket) {
-      this.socket.emit("send_message", { message, video_timestamp: videoTimestamp });
+      this.socket.emit("send_message", { 
+        message, 
+        video_timestamp: videoTimestamp,
+        query_mode: queryMode,
+        start_time: startTime,
+        end_time: endTime
+      });
     }
   }
 

@@ -4,6 +4,6 @@ Contains database models and connection utilities
 """
 
 from .db import engine
-from .models import Session, SessionUser, ChatMessage, VideoAnalysis, VideoProcessingStatus, TVShowInfo
+from .models import Session, SessionUser, ChatMessage, VideoAnalysis, VideoProcessingStatus, TVShowInfo, VideoTranscript
 
-__all__ = ['engine', 'Session', 'SessionUser', 'ChatMessage', 'VideoAnalysis', 'VideoProcessingStatus', 'TVShowInfo']
+__all__ = ['engine', 'Session', 'SessionUser', 'ChatMessage', 'VideoAnalysis', 'VideoProcessingStatus', 'TVShowInfo', 'VideoTranscript']

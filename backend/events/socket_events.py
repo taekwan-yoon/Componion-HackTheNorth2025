@@ -131,6 +131,9 @@ def init_socket_events(socketio):
         user_id = request.sid
         message_text = data.get('message', '').strip()
         video_timestamp = data.get('video_timestamp', 0)
+        query_mode = data.get('query_mode', 'omniscient')
+        start_time = data.get('start_time')
+        end_time = data.get('end_time')
         
         if not message_text:
             emit('error', {'message': 'Message cannot be empty'})
@@ -208,7 +211,10 @@ def init_socket_events(socketio):
                             # Construct the prompt with video context
                             full_prompt = prompt_constructor.construct_prompt(
                                 user_message=question, 
-                                video_timestamp=video_timestamp
+                                video_timestamp=video_timestamp,
+                                query_mode=query_mode,
+                                start_time=start_time,
+                                end_time=end_time
                             )
                             
                             # Generate AI response using Gemini API

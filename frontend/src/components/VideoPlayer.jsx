@@ -332,7 +332,7 @@ const VideoPlayer = ({
       return extractYouTubeEmbedUrl(videoUrl);
     }
     if (videoFile) {
-      return `http://localhost:5000/api/video/${videoFile}`;
+      return `http://localhost:5001/api/video/${videoFile}`;
     }
     return "https://www.w3schools.com/html/mov_bbb.mp4";
   };

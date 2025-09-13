@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import "./ChatBox.css";
+import QueryModeSelector from "./QueryModeSelector";
 
 const ChatBox = ({
   messages,
@@ -17,6 +18,11 @@ const ChatBox = ({
   const [speechSupported, setSpeechSupported] = useState(false);
   const [isTextToSpeechEnabled, setIsTextToSpeechEnabled] = useState(false);
   const [isThinking, setIsThinking] = useState(false); // NEW STATE
+  
+  // Query mode states
+  const [queryMode, setQueryMode] = useState('omniscient'); // 'omniscient', 'temporal', 'window'
+  const [startTime, setStartTime] = useState(0);
+  const [endTime, setEndTime] = useState(60);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
   const recognitionRef = useRef(null);
@@ -220,7 +226,7 @@ const ChatBox = ({
     if (isAIMessage()) {
       console.log("Setting thinking state to true for AI message:", message);
       setIsThinking(true); // SET THINKING STATE
-      onSendMessage(message, currentVideoTime);
+      onSendMessage(message, currentVideoTime, queryMode, startTime, endTime);
 
       // Add timeout to clear thinking state if no response comes
       setTimeout(() => {
@@ -352,6 +358,15 @@ const ChatBox = ({
       </div>
 
       <div className="chat-input-container">
+        <QueryModeSelector
+          queryMode={queryMode}
+          onQueryModeChange={setQueryMode}
+          startTime={startTime}
+          endTime={endTime}
+          onStartTimeChange={setStartTime}
+          onEndTimeChange={setEndTime}
+          currentVideoTime={currentVideoTime}
+        />
         <form onSubmit={handleSubmit} className="unified-form">
           <div className="input-wrapper">
             {speechSupported && (

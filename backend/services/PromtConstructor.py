@@ -1,4 +1,4 @@
-from core import ChatMessage, VideoAnalysis, TVShowInfo
+from core import ChatMessage, VideoAnalysis, TVShowInfo, VideoTranscript
 from .ContextAgent import ContextAgent
 import json
 
@@ -147,13 +147,16 @@ class PromptConstructor:
     return ""
     return ""
 
-  def construct_prompt(self, user_message: str, video_timestamp: int = 0) -> str:
+  def construct_prompt(self, user_message: str, video_timestamp: int = 0, query_mode: str = 'omniscient', start_time: int = None, end_time: int = None) -> str:
     """
     Construct the prompt for the AI model including video context and chat history.
     
     Args:
       user_message: The user's question
       video_timestamp: Current video position in seconds
+      query_mode: 'omniscient' (all data), 'temporal' (up to video_timestamp), 'window' (start_time to end_time)
+      start_time: Start timestamp for window mode (seconds)
+      end_time: End timestamp for window mode (seconds)
       
     Returns:
       str: The constructed prompt for the AI model
@@ -164,19 +167,49 @@ class PromptConstructor:
     # Get session messages
     session_messages = ChatMessage.get_session_messages(self.session_id, limit=20)
 
-    # Get video analysis data
-    video_analysis = VideoAnalysis.get_by_video_url(self.video_url)
-
     # Get TV show information if available
     tv_show_info = TVShowInfo.get_by_video_url(self.video_url)
 
-    # Verify that all expected video analysis data is present
-    required_model_types = ["transcript", "image_descriptions"]
-    found_model_types = [va['model_type'] for va in video_analysis]
+    # Determine timestamp parameters based on query mode
+    query_start_seconds = start_time if start_time is not None else 0
+    query_end_seconds = end_time
+    
+    if query_mode == 'temporal':
+      query_end_seconds = video_timestamp
+    elif query_mode == 'window':
+      query_start_seconds = start_time if start_time is not None else 0
+      query_end_seconds = end_time if end_time is not None else video_timestamp
 
-    for required_model_type in required_model_types:
-      if required_model_type not in found_model_types:
-        raise ValueError(f"Missing expected video analysis data: {required_model_type}. Found: {found_model_types}")
+    # Get normalized transcript data with temporal filtering
+    transcript_data = VideoTranscript.get_by_video_url(
+      self.video_url, 
+      content_type='transcript', 
+      mode=query_mode,
+      start_seconds=query_start_seconds,
+      end_seconds=query_end_seconds
+    )
+    
+    description_data = VideoTranscript.get_by_video_url(
+      self.video_url, 
+      content_type='description', 
+      mode=query_mode,
+      start_seconds=query_start_seconds,
+      end_seconds=query_end_seconds
+    )
+
+    # Fallback to legacy video analysis if new data not available
+    if not transcript_data and not description_data:
+      video_analysis = VideoAnalysis.get_by_video_url(self.video_url)
+      required_model_types = ["transcript", "image_descriptions"]
+      found_model_types = [va['model_type'] for va in video_analysis]
+
+      for required_model_type in required_model_types:
+        if required_model_type not in found_model_types:
+          raise ValueError(f"Missing expected video analysis data: {required_model_type}. Found: {found_model_types}")
+    
+    # Check if we have any transcript data (new or old format)
+    if not transcript_data and not any(va['model_type'] == 'transcript' for va in (VideoAnalysis.get_by_video_url(self.video_url) or [])):
+      raise ValueError("Missing transcript data for video analysis")
 
     # Process video analysis data
     context_parts = []
@@ -192,6 +225,14 @@ class PromptConstructor:
       if enhanced_context:
         context_parts.append(f"\n--- Additional Context ---\n{enhanced_context}")
     
+    # Add query mode context information
+    mode_description = {
+      'omniscient': 'All video content',
+      'temporal': f'Video content up to {video_timestamp} seconds',
+      'window': f'Video content from {query_start_seconds} to {query_end_seconds or "current"} seconds'
+    }
+    context_parts.append(f"Query Mode: {mode_description.get(query_mode, 'Unknown')}")
+    
     # Add video timestamp context
     if video_timestamp > 0:
       # Ensure video_timestamp is treated as an integer for divmod
@@ -200,13 +241,31 @@ class PromptConstructor:
       timestamp_str = f"{minutes:02d}:{seconds:02d}"
       context_parts.append(f"Current video timestamp: {timestamp_str} ({video_timestamp} seconds)")
     
-    # Add video analysis context
-    for analysis in video_analysis:
-      model_output = analysis['model_output']
-      model_type = analysis['model_type']
-      context_part = self._model_output_to_text(model_output, model_type)
-      if context_part:
-        context_parts.append(f"\n--- {model_type.replace('_', ' ').title()} ---\n{context_part}")
+    # Add normalized transcript data
+    if transcript_data:
+      transcript_text = "\n".join([
+        f"[{item['timestamp_text']}] {item['text_content']}" 
+        for item in transcript_data
+      ])
+      context_parts.append(f"\n--- Transcript ---\n{transcript_text}")
+    
+    # Add normalized image description data  
+    if description_data:
+      description_text = "\n".join([
+        f"[{item['timestamp_text']}] Screenshot: {item['text_content']}" 
+        for item in description_data
+      ])
+      context_parts.append(f"\n--- Image Descriptions ---\n{description_text}")
+    
+    # Fallback to legacy format if needed
+    if not transcript_data and not description_data:
+      video_analysis = VideoAnalysis.get_by_video_url(self.video_url)
+      for analysis in video_analysis:
+        model_output = analysis['model_output']
+        model_type = analysis['model_type']
+        context_part = self._model_output_to_text(model_output, model_type)
+        if context_part:
+          context_parts.append(f"\n--- {model_type.replace('_', ' ').title()} ---\n{context_part}")
 
     # Add session messages context
     if session_messages:

@@ -1,0 +1,311 @@
+.query-mode-selector {
+  position: relative;
+  margin-bottom: 12px;
+  z-index: 1000;
+}
+
+.mode-selector-button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: #2d3748;
+  border: 1px solid #4a5568;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.mode-selector-button:hover {
+  background: #374151;
+  border-color: #6b7280;
+}
+
+.mode-current {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.mode-icon {
+  font-size: 16px;
+  min-width: 20px;
+}
+
+.mode-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mode-name {
+  font-weight: 600;
+  color: #f7fafc;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.mode-desc {
+  font-size: 11px;
+  color: #a0aec0;
+  line-height: 1;
+}
+
+.dropdown-arrow {
+  font-size: 12px;
+  color: #a0aec0;
+  transition: transform 0.2s ease;
+  min-width: 12px;
+}
+
+.dropdown-arrow.open {
+  transform: rotate(180deg);
+}
+
+.mode-dropdown {
+  position: fixed;
+  background: #1a202c;
+  border: 1px solid #4a5568;
+  border-radius: 8px;
+  margin-top: 4px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  min-width: 200px;
+}
+
+.mode-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-bottom: 1px solid #2d3748;
+}
+
+.mode-option:last-child {
+  border-bottom: none;
+}
+
+.mode-option:hover {
+  background: #2d3748;
+}
+
+.mode-option-icon {
+  font-size: 16px;
+  min-width: 20px;
+}
+
+.mode-option-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mode-option-title {
+  font-weight: 600;
+  color: #f7fafc;
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+.mode-option-desc {
+  font-size: 11px;
+  color: #a0aec0;
+  line-height: 1.2;
+}
+
+.mode-check {
+  color: #4f46e5;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.time-window-panel {
+  position: fixed;
+  background: #1a202c;
+  border: 1px solid #4a5568;
+  border-radius: 8px;
+  margin-top: 4px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  padding: 16px;
+  min-width: 250px;
+}
+
+.time-window-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #2d3748;
+}
+
+.time-window-header span {
+  font-weight: 600;
+  color: #f7fafc;
+  font-size: 13px;
+}
+
+.close-time-window {
+  background: none;
+  border: none;
+  color: #a0aec0;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.close-time-window:hover {
+  background: #2d3748;
+  color: #f7fafc;
+}
+
+.time-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.time-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.time-input-row label {
+  font-size: 12px;
+  color: #a0aec0;
+  font-weight: 500;
+  min-width: 35px;
+}
+
+.time-input {
+  background: #2d3748;
+  border: 1px solid #4a5568;
+  border-radius: 4px;
+  padding: 6px 8px;
+  color: #f7fafc;
+  font-size: 12px;
+  width: 50px;
+  text-align: center;
+  font-family: monospace;
+  transition: all 0.2s ease;
+}
+
+.time-input:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.3);
+  background: #374151;
+}
+
+.time-input::placeholder {
+  color: #718096;
+}
+
+.time-presets {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.preset-btn {
+  background: #2d3748;
+  border: 1px solid #4a5568;
+  border-radius: 4px;
+  padding: 4px 8px;
+  color: #a0aec0;
+  font-size: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.preset-btn:hover {
+  background: #374151;
+  border-color: #6b7280;
+  color: #f7fafc;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .mode-selector-button {
+    padding: 8px 10px;
+  }
+  
+  .mode-name {
+    font-size: 13px;
+  }
+  
+  .mode-desc {
+    font-size: 10px;
+  }
+  
+  .mode-option {
+    padding: 10px;
+  }
+  
+  .mode-option-title {
+    font-size: 12px;
+  }
+  
+  .mode-option-desc {
+    font-size: 10px;
+  }
+  
+  .time-window-panel {
+    padding: 12px;
+  }
+  
+  .time-input-row {
+    justify-content: space-between;
+  }
+  
+  .time-input {
+    width: 45px;
+    font-size: 11px;
+  }
+  
+  .preset-btn {
+    font-size: 9px;
+    padding: 3px 6px;
+  }
+}
+
+/* Ensure dropdown doesn't break container scrolling */
+.query-mode-selector * {
+  box-sizing: border-box;
+}
+
+/* Animation for dropdown */
+.mode-dropdown {
+  animation: slideDown 0.2s ease-out;
+}
+
+.time-window-panel {
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = "http://localhost:5001/api";
 
 const api = axios.create({
   baseURL: API_URL,
@@ -29,12 +29,15 @@ export const sessionAPI = {
   },
 
   // Ask AI question with video timestamp context
-  askAI: async (message, sessionId, userId, videoTimestamp = 0) => {
+  askAI: async (message, sessionId, userId, videoTimestamp = 0, queryMode = 'omniscient', startTime = null, endTime = null) => {
     const response = await api.post("/ask", {
       message: message,
       session_id: sessionId,
       user_id: userId,
       video_timestamp: videoTimestamp,
+      query_mode: queryMode,
+      start_time: startTime,
+      end_time: endTime,
     });
     return response.data;
   },
