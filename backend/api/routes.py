@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, send_from_directory
-from core import Session, SessionUser, ChatMessage, VideoAnalysis, VideoProcessingStatus
+from core import Session, SessionUser, ChatMessage, VideoAnalysis, VideoProcessingStatus, VideoTranscript
 from utils.name_generator import generate_random_name, generate_user_id
 from datetime import datetime
 import os
@@ -107,6 +107,11 @@ def ask_ai():
         # Get current video timestamp from request
         video_timestamp = data.get('video_timestamp', 0)
         
+        # Get query mode and time window parameters
+        query_mode = data.get('query_mode', 'omniscient')  # 'omniscient', 'temporal', 'window'
+        start_time = data.get('start_time')  # For window mode
+        end_time = data.get('end_time')  # For window mode
+        
         # Verify session exists
         session = Session.get_by_id(data['session_id'])
         if not session:
@@ -128,7 +133,10 @@ def ask_ai():
             # Construct the prompt with video context
             full_prompt = prompt_constructor.construct_prompt(
                 user_message=data['message'], 
-                video_timestamp=video_timestamp
+                video_timestamp=video_timestamp,
+                query_mode=query_mode,
+                start_time=start_time,
+                end_time=end_time
             )
             
             # Generate AI response using Gemini API
@@ -160,6 +168,9 @@ def ask_ai():
                 'session_id': data['session_id'],
                 'answer': response,
                 'video_timestamp': video_timestamp,
+                'query_mode': query_mode,
+                'start_time': start_time,
+                'end_time': end_time,
                 'timestamp': datetime.now().isoformat()
             })
             
@@ -365,4 +376,49 @@ def get_video_processing_status(video_url):
             
     except Exception as e:
         print(f"Error getting video processing status: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@api.route('/migrate-video-data', methods=['POST'])
+def migrate_video_data():
+    """Migrate existing video analysis data to normalized format"""
+    try:
+        VideoTranscript.migrate_from_video_analysis()
+        return jsonify({
+            'message': 'Video data migration completed successfully'
+        })
+    except Exception as e:
+        print(f"Error during migration: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@api.route('/video-transcript/<path:video_url>', methods=['GET'])
+def get_video_transcript(video_url):
+    """Get video transcript data with query mode support"""
+    try:
+        # Get query parameters
+        content_type = request.args.get('content_type')  # 'transcript', 'description', or None for all
+        query_mode = request.args.get('mode', 'omniscient')  # 'omniscient', 'temporal', 'window'
+        start_seconds = request.args.get('start_seconds', type=int, default=0)
+        end_seconds = request.args.get('end_seconds', type=int)
+        
+        # Get transcript data
+        transcript_data = VideoTranscript.get_by_video_url(
+            video_url,
+            content_type=content_type,
+            mode=query_mode,
+            start_seconds=start_seconds,
+            end_seconds=end_seconds
+        )
+        
+        return jsonify({
+            'video_url': video_url,
+            'content_type': content_type,
+            'query_mode': query_mode,
+            'start_seconds': start_seconds,
+            'end_seconds': end_seconds,
+            'transcript_count': len(transcript_data),
+            'transcript_data': transcript_data
+        })
+        
+    except Exception as e:
+        print(f"Error getting video transcript: {str(e)}")
         return jsonify({'error': str(e)}), 500

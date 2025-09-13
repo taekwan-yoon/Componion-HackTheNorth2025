@@ -39,7 +39,7 @@ CREATE INDEX IF NOT EXISTS idx_session_users_session_id ON session_users(session
 CREATE INDEX IF NOT EXISTS idx_chat_messages_session_id ON chat_messages(session_id);
 CREATE INDEX IF NOT EXISTS idx_chat_messages_created_at ON chat_messages(created_at);
 
--- Video Analysis Table
+-- Video Analysis Table (legacy - keeping for backward compatibility)
 CREATE TABLE IF NOT EXISTS video_analysis (
     id BIGSERIAL PRIMARY KEY,
     video_id VARCHAR(255) NOT NULL,
@@ -52,6 +52,25 @@ CREATE TABLE IF NOT EXISTS video_analysis (
 
 -- Create the index for video_analysis
 CREATE INDEX IF NOT EXISTS idx_video_id ON video_analysis(video_id);
+
+-- New normalized video transcript/analysis table
+CREATE TABLE IF NOT EXISTS video_transcript (
+    id BIGSERIAL PRIMARY KEY,
+    video_id VARCHAR(255) NOT NULL,
+    timestamp_text VARCHAR(10) NOT NULL, -- "00:04" format
+    timestamp_seconds INTEGER NOT NULL, -- 4 seconds
+    text_content TEXT NOT NULL,
+    content_type VARCHAR(50) DEFAULT 'transcript', -- 'transcript', 'description', etc.
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    UNIQUE (video_id, content_type, timestamp_seconds)
+);
+
+-- Indexes for efficient querying
+CREATE INDEX IF NOT EXISTS idx_video_transcript_video_id ON video_transcript(video_id);
+CREATE INDEX IF NOT EXISTS idx_video_transcript_timestamp_seconds ON video_transcript(timestamp_seconds);
+CREATE INDEX IF NOT EXISTS idx_video_transcript_video_timestamp ON video_transcript(video_id, timestamp_seconds);
+CREATE INDEX IF NOT EXISTS idx_video_transcript_content_type ON video_transcript(content_type);
 
 -- TV Show Information Table
 CREATE TABLE IF NOT EXISTS tv_show_info (

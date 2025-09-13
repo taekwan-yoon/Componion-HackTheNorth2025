@@ -389,8 +389,9 @@ class VideoAnalysis:
     
     @staticmethod
     def create(video_id, model_type, model_output):
-        """Create a new video analysis entry"""
+        """Create a new video analysis entry and also populate normalized table"""
         with engine.begin() as conn:
+            # Insert into legacy table
             conn.execute(
                 text("""
                     INSERT INTO video_analysis (video_id, model_type, model_output)
@@ -402,10 +403,163 @@ class VideoAnalysis:
                 """),
                 {
                     "video_id": video_id,
-                "model_type": model_type,
+                    "model_type": model_type,
                     "model_output": model_output
                 }
             )
+            
+            # Also populate the new normalized table if applicable
+            if model_type in ['transcript', 'image_descriptions']:
+                content_type = 'transcript' if model_type == 'transcript' else 'description'
+                VideoTranscript.create_from_json_array(video_id, content_type, model_output)
+
+class VideoTranscript:
+    @staticmethod
+    def create_from_json_array(video_id, content_type, json_data):
+        """Create multiple transcript entries from JSON array (migration helper)"""
+        import json
+        
+        # Parse JSON if it's a string
+        if isinstance(json_data, str):
+            json_data = json.loads(json_data)
+        
+        with engine.begin() as conn:
+            # First, delete existing entries for this video and content type
+            conn.execute(
+                text("""
+                    DELETE FROM video_transcript 
+                    WHERE video_id = :video_id AND content_type = :content_type
+                """),
+                {"video_id": video_id, "content_type": content_type}
+            )
+            
+            # Insert individual timestamp records
+            for item in json_data:
+                timestamp_text = item.get('timestamp', '00:00')
+                timestamp_seconds = item.get('seconds', 0)
+                text_content = item.get('text') or item.get('description', '')
+                
+                conn.execute(
+                    text("""
+                        INSERT INTO video_transcript (video_id, timestamp_text, timestamp_seconds, text_content, content_type)
+                        VALUES (:video_id, :timestamp_text, :timestamp_seconds, :text_content, :content_type)
+                        ON CONFLICT (video_id, content_type, timestamp_seconds) 
+                        DO UPDATE SET 
+                            timestamp_text = EXCLUDED.timestamp_text,
+                            text_content = EXCLUDED.text_content
+                    """),
+                    {
+                        "video_id": video_id,
+                        "timestamp_text": timestamp_text,
+                        "timestamp_seconds": timestamp_seconds,
+                        "text_content": text_content,
+                        "content_type": content_type
+                    }
+                )
+    
+    @staticmethod
+    def get_by_video_url(video_url, content_type=None, mode='omniscient', start_seconds=0, end_seconds=None):
+        """
+        Get video transcript data with different modes
+        
+        Args:
+            video_url: Video URL identifier
+            content_type: Filter by content type ('transcript', 'description', etc.)
+            mode: 'omniscient' (all data), 'temporal' (up to end_seconds), 'window' (start to end)
+            start_seconds: Start timestamp for temporal/window modes
+            end_seconds: End timestamp for temporal/window modes
+        """
+        if not video_url:
+            return []
+        
+        # Build the query based on mode
+        query = """
+            SELECT id, video_id, timestamp_text, timestamp_seconds, text_content, content_type, created_at
+            FROM video_transcript 
+            WHERE video_id = :video_url
+        """
+        params = {"video_url": video_url}
+        
+        # Add content type filter if specified
+        if content_type:
+            query += " AND content_type = :content_type"
+            params["content_type"] = content_type
+        
+        # Add temporal filtering based on mode
+        if mode == 'temporal' and end_seconds is not None:
+            query += " AND timestamp_seconds <= :end_seconds"
+            params["end_seconds"] = end_seconds
+        elif mode == 'window' and start_seconds is not None and end_seconds is not None:
+            query += " AND timestamp_seconds >= :start_seconds AND timestamp_seconds <= :end_seconds"
+            params["start_seconds"] = start_seconds
+            params["end_seconds"] = end_seconds
+        
+        query += " ORDER BY timestamp_seconds ASC"
+        
+        with engine.connect() as conn:
+            results = conn.execute(text(query), params).fetchall()
+            
+            return [{
+                'id': row[0],
+                'video_id': row[1],
+                'timestamp_text': row[2],
+                'timestamp_seconds': row[3],
+                'text_content': row[4],
+                'content_type': row[5],
+                'created_at': row[6].isoformat()
+            } for row in results]
+    
+    @staticmethod
+    def get_legacy_format(video_url, content_type=None, mode='omniscient', start_seconds=0, end_seconds=None):
+        """
+        Get transcript data in the legacy JSON array format for backward compatibility
+        """
+        transcripts = VideoTranscript.get_by_video_url(video_url, content_type, mode, start_seconds, end_seconds)
+        
+        # Convert to legacy format grouped by content type
+        result = {}
+        for transcript in transcripts:
+            ct = transcript['content_type']
+            if ct not in result:
+                result[ct] = []
+            
+            # Format for legacy compatibility
+            if ct == 'transcript':
+                result[ct].append({
+                    'timestamp': transcript['timestamp_text'],
+                    'seconds': transcript['timestamp_seconds'],
+                    'text': transcript['text_content']
+                })
+            elif ct == 'description':
+                result[ct].append({
+                    'timestamp': transcript['timestamp_text'],
+                    'seconds': transcript['timestamp_seconds'],
+                    'description': transcript['text_content']
+                })
+        
+        return result
+    
+    @staticmethod
+    def migrate_from_video_analysis():
+        """Migration function to convert existing video_analysis data to new format"""
+        with engine.connect() as conn:
+            # Get all existing video analysis data
+            results = conn.execute(
+                text("""
+                    SELECT video_id, model_type, model_output 
+                    FROM video_analysis 
+                    WHERE model_type IN ('transcript', 'image_descriptions')
+                """)
+            ).fetchall()
+            
+            for row in results:
+                video_id, model_type, model_output = row
+                
+                # Map model types to content types
+                content_type = 'transcript' if model_type == 'transcript' else 'description'
+                
+                # Create individual records
+                VideoTranscript.create_from_json_array(video_id, content_type, model_output)
 
 class TVShowInfo:
     @staticmethod

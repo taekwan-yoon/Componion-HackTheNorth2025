@@ -109,8 +109,8 @@ const MasterSessionRoom = () => {
     navigate("/");
   };
 
-  const handleSendMessage = (message, videoTimestamp) => {
-    socketService.sendMessage(message, videoTimestamp);
+  const handleSendMessage = (message, videoTimestamp, queryMode, startTime, endTime) => {
+    socketService.sendMessage(message, videoTimestamp, queryMode, startTime, endTime);
   };
 
   const handleAskQuestion = async (question) => {

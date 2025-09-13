@@ -65,7 +65,7 @@ def db_health():
         return jsonify({"status": "error", "database": "disconnected", "error": str(e)}), 500
 
 if __name__ == "__main__":
-    port = int(os.getenv("PORT", 5000))
+    port = int(os.getenv("PORT", 5001))
     print(f"Starting HTN 2025 Backend on port {port}")
     print(f"Database URL: {os.getenv('DATABASE_URL', 'Not configured')}")
     socketio.run(app, host="0.0.0.0", port=port, debug=app.config["DEBUG"])
