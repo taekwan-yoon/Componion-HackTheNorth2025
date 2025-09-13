@@ -22,5 +22,8 @@ rad.json
 TestResults.xml
 
 .claude/
-
 .env
+
+*__pycache__*
+
+backend/youtube/data/*
