@@ -208,9 +208,10 @@ const MasterSessionRoom = () => {
 
   return (
     <div className="session-room master-session">
-      <div className="session-header demo-header">
+      <div className="session-header">
         <div className="session-title">
           <h1>Componion</h1>
+          <span className="session-id">{session?.name || "Session Room"}</span>
         </div>
         <div className="session-actions">
           <button onClick={handleLeaveSession} className="leave-button">
