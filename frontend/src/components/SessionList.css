@@ -78,7 +78,7 @@
 .welcome-mascot {
   width: 300px;
   height: auto;
-  margin-bottom: var(--space-xl);
+  margin: 0 auto var(--space-xl) auto;
   display: block;
   animation: float 3s ease-in-out infinite;
 }
