@@ -24,12 +24,12 @@ const SessionList = ({ onJoinSession, onCreateSession }) => {
 
   useEffect(() => {
     if (showCreateModal) {
-      document.body.classList.add('modal-open');
+      document.body.classList.add("modal-open");
     } else {
-      document.body.classList.remove('modal-open');
+      document.body.classList.remove("modal-open");
     }
     return () => {
-      document.body.classList.remove('modal-open');
+      document.body.classList.remove("modal-open");
     };
   }, [showCreateModal]);
 
@@ -50,12 +50,20 @@ const SessionList = ({ onJoinSession, onCreateSession }) => {
     return (
       <div className="welcome-section">
         <div className="welcome-content">
-          <img src="/mascot.png" alt="Componion Mascot" className="welcome-mascot" />
+          <img
+            src="/mascot.png"
+            alt="Componion Mascot"
+            className="welcome-mascot"
+          />
           <div className="welcome-text">
             <h1>Welcome to Componion</h1>
             <div className="welcome-buttons">
-              <button onClick={() => setMode("create")}>Create New Session</button>
-              <button onClick={() => setMode("join")}>Join Existing Session</button>
+              <button onClick={() => setMode("create")}>
+                Create New Session
+              </button>
+              <button onClick={() => setMode("join")}>
+                Join Existing Session
+              </button>
             </div>
           </div>
         </div>
@@ -211,12 +219,20 @@ const SessionList = ({ onJoinSession, onCreateSession }) => {
 
   return (
     <div className="session-list">
-      {/* Main Landing Section */}
       <div className="landing-section">
         <div className="landing-content">
           <div className="welcome-text">
-            <img src="/mascot.png" alt="Componion Mascot" className="welcome-mascot" />
-            <h1>Welcome to Componion</h1>
+            <img
+              src="/mascot.png"
+              alt="Componion Mascot"
+              className="welcome-mascot"
+              style={{ width: "640px", height: "360px" }}
+            />
+            <h1>
+              <span style={{ color: "var(--primary)" }}>Welcome to </span>
+              <span style={{ color: "var(--primary-dark)" }}>Comp</span>
+              <span style={{ color: "#7be495" }}>Onion</span>
+            </h1>
             <p>Ask while watching videos</p>
           </div>
 
