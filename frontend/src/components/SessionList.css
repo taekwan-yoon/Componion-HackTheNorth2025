@@ -268,18 +268,23 @@
 
 .cancel-button {
   padding: var(--space-md) var(--space-xl);
-  background: var(--platinum);
-  color: var(--pale-dogwood);
-  border: 2px solid var(--platinum);
-  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--cherry-blossom-pink), var(--pink));
+  color: var(--white);
+  border: none;
+  font-size: 1rem;
+  border-radius: 0 !important;
   cursor: pointer;
   transition: var(--transition-fast);
   font-weight: 500;
+  min-width: 160px;
+  justify-content: center;
+  box-shadow: var(--shadow-md);
 }
 
 .cancel-button:hover {
-  background: var(--champagne-pink);
-  border-color: var(--champagne-pink);
+  background: linear-gradient(135deg, var(--cherry-blossom-pink), var(--pink));
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
 }
 
 .submit-button {
@@ -287,12 +292,14 @@
   background: linear-gradient(135deg, var(--cherry-blossom-pink), var(--pink));
   color: var(--white);
   border: none;
-  border-radius: var(--radius-md);
   font-size: 1rem;
+  border-radius: 0 !important;
   cursor: pointer;
   transition: var(--transition-fast);
-  font-weight: 600;
+  font-weight: 500;
   box-shadow: var(--shadow-md);
+  min-width: 160px;
+  justify-content: center;
 }
 
 .submit-button:hover:not(:disabled) {
