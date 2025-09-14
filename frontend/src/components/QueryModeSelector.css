@@ -169,7 +169,7 @@
   cursor: pointer;
   font-size: 16px;
   padding: var(--space-xs);
-  width: 24px;
+  width: 30px;
   height: 24px;
   display: flex;
   align-items: center;
@@ -212,7 +212,7 @@
   padding: var(--space-xs) var(--space-sm);
   color: var(--mountbatten-pink);
   font-size: 12px;
-  width: 50px;
+  width: 55px;
   text-align: center;
   font-family: var(--font-mono);
   transition: var(--transition-fast);

@@ -262,8 +262,7 @@ const ChatBox = ({
         <div className="chat-title">
           <h3>💬 Chat & AI Assistant</h3>
           <p className="chat-subtitle">
-            Say "Hey Componion", "Companion", or use @Componion to ask AI
-            questions
+            Say "Hey Componion", "Companion", or "@Componion" to talk to AI
           </p>
         </div>
         <div className="connection-status">

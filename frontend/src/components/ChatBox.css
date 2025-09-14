@@ -37,8 +37,8 @@
 }
 
 .connection-status {
-  font-size: 0.875rem;
-  font-weight: 500;
+  font-size: 0.775rem;
+  font-weight: 400;
 }
 
 .status-indicator.connected {
