@@ -35,7 +35,7 @@
 }
 
 .video-status {
-  background: linear-gradient(135deg, var(--error), #dc3545);
+  background: var(--error);
   color: var(--white);
   padding: var(--space-xs) var(--space-sm);
   border-radius: var(--radius-sm);
@@ -45,7 +45,7 @@
 }
 
 .master-badge {
-  background: linear-gradient(135deg, var(--warning), #ffc107);
+  background: var(--warning);
   color: var(--dark-gray);
   padding: var(--space-xs) var(--space-sm);
   border-radius: var(--radius-sm);
@@ -55,7 +55,7 @@
 }
 
 .video-time {
-  background: linear-gradient(135deg, var(--cherry-blossom-pink), var(--pink));
+  background: var(--mountbatten-pink);
   color: var(--white);
   padding: var(--space-xs) var(--space-sm);
   border-radius: var(--radius-sm);
@@ -100,7 +100,7 @@
   width: 40px;
   height: 40px;
   border: 4px solid var(--platinum);
-  border-top: 4px solid var(--cherry-blossom-pink);
+  border-top: 4px solid var(--mountbatten-pink);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 0 auto var(--space-lg);
@@ -136,7 +136,7 @@
 
 .error-content h3 {
   margin: 0 0 var(--space-sm) 0;
-  color: var(--cherry-blossom-pink);
+  color: var(--mountbatten-pink);
   font-weight: 600;
 }
 
@@ -157,7 +157,7 @@
 .retry-button {
   margin-top: var(--space-lg);
   padding: var(--space-sm) var(--space-lg);
-  background: linear-gradient(135deg, var(--cherry-blossom-pink), var(--pink));
+  background: var(--mountbatten-pink);
   color: var(--white);
   border: none;
   border-radius: var(--radius-md);
@@ -230,8 +230,8 @@
 
 .video-url-input:focus {
   outline: none;
-  border-color: var(--cherry-blossom-pink);
-  box-shadow: 0 0 0 2px rgba(244, 172, 183, 0.1);
+  border-color: var(--mountbatten-pink);
+  box-shadow: 0 0 0 2px rgba(157, 129, 137, 0.1);
   background: var(--white);
 }
 
@@ -245,7 +245,7 @@
 }
 
 .video-url-input::-webkit-scrollbar-thumb {
-  background: var(--cherry-blossom-pink);
+  background: var(--mountbatten-pink);
   border-radius: var(--radius-full);
 }
 

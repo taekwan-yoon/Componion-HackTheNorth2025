@@ -16,24 +16,25 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--space-lg) var(--space-xl);
-  background: linear-gradient(135deg, var(--champagne-pink) 0%, var(--platinum) 100%);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--champagne-pink);
   border-bottom: 1px solid var(--platinum);
 }
 
 .chat-title h3 {
-  margin: 0 0 var(--space-xs) 0;
+  margin: 0;
   color: var(--mountbatten-pink);
-  font-size: 1.25rem;
+  font-size: 1rem;
   font-weight: 600;
 }
 
 .chat-subtitle {
   margin: 0;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   color: var(--mountbatten-pink);
   opacity: 0.7;
   font-style: italic;
+  display: none;
 }
 
 .connection-status {
@@ -78,7 +79,7 @@
 .ai-hint {
   margin-top: var(--space-sm);
   font-size: 0.9rem;
-  color: var(--cherry-blossom-pink);
+  color: var(--mountbatten-pink);
   font-weight: 500;
 }
 
@@ -116,11 +117,11 @@
 }
 
 .message.own-message .message-author {
-  color: var(--cherry-blossom-pink);
+  color: var(--mountbatten-pink);
 }
 
 .ai-badge {
-  color: var(--cherry-blossom-pink);
+  color: var(--mountbatten-pink);
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -128,7 +129,7 @@
 }
 
 .ai-directed-icon {
-  color: var(--pink);
+  color: var(--mountbatten-pink);
   font-size: 0.9rem;
 }
 
@@ -149,31 +150,31 @@
 }
 
 .message.own-message .message-content {
-  background: linear-gradient(135deg, var(--cherry-blossom-pink), var(--pink));
+  background: var(--mountbatten-pink);
   color: var(--white);
-  border-color: var(--cherry-blossom-pink);
+  border-color: var(--mountbatten-pink);
 }
 
 .message.ai .message-content {
-  background: linear-gradient(135deg, var(--champagne-pink), var(--platinum));
-  border-color: var(--cherry-blossom-pink);
+  background: var(--champagne-pink);
+  border-color: var(--mountbatten-pink);
   color: var(--mountbatten-pink);
-  border-left: 4px solid var(--cherry-blossom-pink);
+  border-left: 4px solid var(--mountbatten-pink);
 }
 
 /* AI-directed messages styling */
 .message.ai-directed .message-content {
-  background: linear-gradient(135deg, var(--pink) 5%, var(--champagne-pink) 100%);
-  border: 2px solid var(--cherry-blossom-pink);
-  border-left: 4px solid var(--pink);
+  background: var(--champagne-pink);
+  border: 2px solid var(--mountbatten-pink);
+  border-left: 4px solid var(--mountbatten-pink);
   color: var(--mountbatten-pink);
   font-weight: 500;
 }
 
 .message.ai-directed.own-message .message-content {
-  background: linear-gradient(135deg, var(--pink), var(--cherry-blossom-pink));
+  background: var(--mountbatten-pink);
   color: var(--white);
-  border-color: var(--pink);
+  border-color: var(--mountbatten-pink);
 }
 
 /* Reply indicator styling */
@@ -183,7 +184,7 @@
   gap: var(--space-sm);
   padding: var(--space-sm) var(--space-md);
   background: var(--platinum);
-  border: 1px solid var(--champagne-pink);
+  border: 1px solid var(--mountbatten-pink);
   border-radius: var(--radius-sm);
   margin-bottom: var(--space-sm);
   font-size: 0.8rem;
@@ -193,7 +194,7 @@
 }
 
 .reply-icon {
-  color: var(--cherry-blossom-pink);
+  color: var(--mountbatten-pink);
   font-weight: bold;
 }
 
@@ -203,8 +204,8 @@
 
 /* Thinking Message Animation */
 .thinking-message .message-content {
-  background: linear-gradient(135deg, var(--champagne-pink), var(--platinum));
-  border-color: var(--cherry-blossom-pink);
+  background: var(--champagne-pink);
+  border-color: var(--mountbatten-pink);
   font-style: italic;
   animation: pulse 2s infinite;
 }
@@ -216,7 +217,7 @@
 }
 
 .thinking-text {
-  color: var(--cherry-blossom-pink);
+  color: var(--mountbatten-pink);
   font-style: italic;
   font-weight: 500;
 }
@@ -229,7 +230,7 @@
 .thinking-dots .dot {
   width: 6px;
   height: 6px;
-  background-color: var(--cherry-blossom-pink);
+  background-color: var(--mountbatten-pink);
   border-radius: 50%;
   animation: bounce 1.4s infinite ease-in-out;
 }
@@ -251,9 +252,18 @@
 
 /* Chat Input Container */
 .chat-input-container {
-  padding: var(--space-lg) var(--space-xl);
+  padding: var(--space-md) var(--space-lg);
   background: var(--white);
   border-top: 1px solid var(--platinum);
+}
+
+/* Input Controls Row */
+.input-controls-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-sm);
+  gap: var(--space-md);
 }
 
 .unified-form {
@@ -265,9 +275,6 @@
 .input-wrapper {
   flex: 1;
   position: relative;
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
 }
 
 /* Voice Controls */
@@ -281,19 +288,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  border: 2px solid var(--platinum);
-  border-radius: var(--radius-full);
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--platinum);
+  border-radius: var(--radius-sm);
   background: var(--white);
   cursor: pointer;
-  font-size: 18px;
+  font-size: 14px;
   transition: var(--transition-fast);
   flex-shrink: 0;
 }
 
 .voice-button:hover:not(:disabled) {
-  border-color: var(--cherry-blossom-pink);
+  border-color: var(--mountbatten-pink);
   background: var(--champagne-pink);
   transform: scale(1.05);
 }
@@ -304,8 +311,8 @@
 }
 
 .voice-button.active {
-  background: var(--cherry-blossom-pink);
-  border-color: var(--cherry-blossom-pink);
+  background: var(--mountbatten-pink);
+  border-color: var(--mountbatten-pink);
   color: var(--white);
 }
 
@@ -341,8 +348,8 @@
 }
 
 .input-wrapper input:focus {
-  border-color: var(--cherry-blossom-pink);
-  box-shadow: 0 0 0 3px rgba(244, 172, 183, 0.1);
+  border-color: var(--mountbatten-pink);
+  box-shadow: 0 0 0 3px rgba(157, 129, 137, 0.1);
 }
 
 .input-wrapper input:disabled {
@@ -389,7 +396,7 @@
 
 .suggestion-text {
   font-weight: 600;
-  color: var(--cherry-blossom-pink);
+  color: var(--mountbatten-pink);
 }
 
 .suggestion-desc {
@@ -413,20 +420,22 @@
 }
 
 .submit-button.send-button {
-  background: linear-gradient(135deg, var(--platinum), var(--champagne-pink));
+  background: var(--platinum);
   color: var(--mountbatten-pink);
+  min-width: 100px;
 }
 
 .submit-button.send-button:hover:not(:disabled) {
-  background: linear-gradient(135deg, var(--champagne-pink), var(--pink));
+  background: var(--mountbatten-pink);
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
   color: var(--white);
 }
 
 .submit-button.ai-button {
-  background: linear-gradient(135deg, var(--cherry-blossom-pink), var(--pink));
+  background: var(--mountbatten-pink);
   color: var(--white);
+  min-width: 100px;
 }
 
 .submit-button.ai-button:hover:not(:disabled) {
@@ -453,7 +462,7 @@
 }
 
 .messages-list::-webkit-scrollbar-thumb {
-  background: var(--cherry-blossom-pink);
+  background: var(--mountbatten-pink);
   border-radius: var(--radius-full);
 }
 
@@ -484,9 +493,9 @@
   }
   
   .voice-button {
-    width: 40px;
-    height: 40px;
-    font-size: 16px;
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
   }
   
   .unified-form {

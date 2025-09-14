@@ -15,8 +15,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--space-lg) var(--space-xl);
-  background: linear-gradient(135deg, var(--champagne-pink), var(--platinum));
+  padding: var(--space-sm) var(--space-lg);
+  background: var(--champagne-pink);
   border-bottom: 1px solid var(--platinum);
 }
 
@@ -28,7 +28,7 @@
 }
 
 .user-count {
-  background: linear-gradient(135deg, var(--cherry-blossom-pink), var(--pink));
+  background: var(--mountbatten-pink);
   color: var(--white);
   padding: var(--space-xs) var(--space-sm);
   border-radius: var(--radius-full);
@@ -72,14 +72,14 @@
 
 .user-item:hover {
   background: var(--champagne-pink);
-  border-color: var(--cherry-blossom-pink);
+  border-color: var(--mountbatten-pink);
   transform: translateY(-1px);
   box-shadow: var(--shadow-sm);
 }
 
 .user-item.current-user {
-  background: linear-gradient(135deg, var(--champagne-pink) 0%, var(--platinum) 100%);
-  border-color: var(--cherry-blossom-pink);
+  background: var(--champagne-pink);
+  border-color: var(--mountbatten-pink);
   box-shadow: var(--shadow-sm);
 }
 
@@ -87,7 +87,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--cherry-blossom-pink), var(--pink));
+  background: var(--mountbatten-pink);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -100,11 +100,12 @@
 }
 
 .user-item.current-user .user-avatar {
-  background: linear-gradient(135deg, var(--mountbatten-pink), #8b6c7e);
+  background: var(--platinum);
+  color: var(--mountbatten-pink);
 }
 
 .master-user .user-avatar.master-avatar {
-  background: linear-gradient(135deg, var(--warning), #ffed4e);
+  background: var(--warning);
   color: var(--dark-gray);
 }
 
@@ -120,7 +121,7 @@
 }
 
 .demo-badge {
-  background: linear-gradient(135deg, var(--cherry-blossom-pink), var(--pink));
+  background: var(--mountbatten-pink);
   color: var(--white);
   font-size: 0.7rem;
   padding: var(--space-xs) var(--space-sm);
@@ -131,12 +132,12 @@
 }
 
 .demo-info {
-  border: 2px dashed var(--cherry-blossom-pink);
-  background: rgba(244, 172, 183, 0.1);
+  border: 2px dashed var(--mountbatten-pink);
+  background: rgba(157, 129, 137, 0.1);
 }
 
 .demo-avatar {
-  background: linear-gradient(135deg, var(--cherry-blossom-pink), var(--pink)) !important;
+  background: var(--mountbatten-pink) !important;
   color: var(--white) !important;
 }
 
@@ -165,7 +166,7 @@
 }
 
 .you-badge {
-  background: linear-gradient(135deg, var(--cherry-blossom-pink), var(--pink));
+  background: var(--mountbatten-pink);
   color: var(--white);
   padding: var(--space-xs) var(--space-sm);
   border-radius: var(--radius-sm);
@@ -173,6 +174,8 @@
   font-weight: 500;
   text-transform: uppercase;
   box-shadow: var(--shadow-sm);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .user-joined {
@@ -202,7 +205,7 @@
 }
 
 .users-container::-webkit-scrollbar-thumb {
-  background: var(--cherry-blossom-pink);
+  background: var(--mountbatten-pink);
   border-radius: var(--radius-full);
 }
 

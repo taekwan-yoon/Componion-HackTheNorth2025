@@ -2,7 +2,7 @@
 
 .query-mode-selector {
   position: relative;
-  margin-bottom: var(--space-md);
+  margin-bottom: var(--space-sm);
   z-index: 1000;
 }
 
@@ -10,7 +10,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--space-sm) var(--space-md);
+  padding: var(--space-xs) var(--space-sm);
   background: var(--white);
   border: 2px solid var(--platinum);
   border-radius: var(--radius-md);
@@ -21,7 +21,7 @@
 
 .mode-selector-button:hover {
   background: var(--champagne-pink);
-  border-color: var(--cherry-blossom-pink);
+  border-color: var(--mountbatten-pink);
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
 }
@@ -34,8 +34,8 @@
 }
 
 .mode-icon {
-  font-size: 16px;
-  min-width: 20px;
+  font-size: 14px;
+  min-width: 16px;
 }
 
 .mode-info {
@@ -47,12 +47,12 @@
 .mode-name {
   font-weight: 600;
   color: var(--mountbatten-pink);
-  font-size: 14px;
+  font-size: 12px;
   line-height: 1;
 }
 
 .mode-desc {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--mountbatten-pink);
   line-height: 1;
   opacity: 0.7;
@@ -129,7 +129,7 @@
 }
 
 .mode-check {
-  color: var(--cherry-blossom-pink);
+  color: var(--mountbatten-pink);
   font-weight: bold;
   font-size: 14px;
 }
@@ -220,8 +220,8 @@
 
 .time-input:focus {
   outline: none;
-  border-color: var(--cherry-blossom-pink);
-  box-shadow: 0 0 0 2px rgba(244, 172, 183, 0.1);
+  border-color: var(--mountbatten-pink);
+  box-shadow: 0 0 0 2px rgba(157, 129, 137, 0.1);
   background: var(--champagne-pink);
 }
 
@@ -249,8 +249,8 @@
 }
 
 .preset-btn:hover {
-  background: var(--cherry-blossom-pink);
-  border-color: var(--cherry-blossom-pink);
+  background: var(--mountbatten-pink);
+  border-color: var(--mountbatten-pink);
   color: var(--white);
   transform: translateY(-1px);
 }
@@ -334,7 +334,7 @@
 
 .mode-dropdown::-webkit-scrollbar-thumb,
 .time-window-panel::-webkit-scrollbar-thumb {
-  background: var(--cherry-blossom-pink);
+  background: var(--mountbatten-pink);
   border-radius: var(--radius-full);
 }
 
