@@ -532,13 +532,13 @@ const VideoPlayer = ({
 
       <div className="video-info-bar">
         <div className="video-meta">
-          <span className="video-duration">📹 Duration: {videoDuration}</span>
+          <span className="video-duration">Duration: {videoDuration}</span>
           <span className="video-format">
-            {isYouTube ? "🎥 YouTube" : "📁 MP4"} • 720p
+            {isYouTube ? "YouTube" : "MP4"} • 720p
           </span>
         </div>
         <div className="video-url-container">
-          <span className="video-url-label">🔗 Source:</span>
+          <span className="video-url-label">🔗</span>
           <input 
             type="text" 
             value={finalVideoSource} 

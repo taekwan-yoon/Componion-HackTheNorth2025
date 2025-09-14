@@ -22,6 +22,17 @@ const SessionList = ({ onJoinSession, onCreateSession }) => {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    if (showCreateModal) {
+      document.body.classList.add('modal-open');
+    } else {
+      document.body.classList.remove('modal-open');
+    }
+    return () => {
+      document.body.classList.remove('modal-open');
+    };
+  }, [showCreateModal]);
+
   const fetchSessions = async () => {
     try {
       const data = await sessionAPI.getAllSessions();
@@ -391,14 +402,13 @@ const SessionList = ({ onJoinSession, onCreateSession }) => {
                       </div>
                     )} */}
                   </div>
-                }
-
-                <button
-                  className="join-session-button"
-                  onClick={() => onJoinSession(session)}
-                >
-                  {session.is_master ? "Join Watch Session" : "Join Session"}
-                </button>
+                  <button
+                    className="join-session-button"
+                    onClick={() => onJoinSession(session)}
+                  >
+                    {session.is_master ? "Join Watch Session" : "Join Session"}
+                  </button>
+                </div>
               </div>
             ))}
           </div>

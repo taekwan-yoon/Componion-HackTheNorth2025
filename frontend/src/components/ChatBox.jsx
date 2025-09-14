@@ -310,7 +310,7 @@ const ChatBox = ({
             <div className="no-messages">
               <p>No messages yet. Start the conversation!</p>
               <p className="ai-hint">
-                💡 Say "Hey Componion", "Companion" or type @Componion to ask
+                Say "Hey Componion", "Companion" or type @Componion to ask
                 the AI assistant
               </p>
             </div>
@@ -337,12 +337,10 @@ const ChatBox = ({
                   <div className="message-header">
                     <span className="message-author">
                       {message.message_type === "ai" ? (
-                        <span className="ai-badge">🤖 Componion</span>
+                        <span className="ai-badge">Componion</span>
                       ) : (
                         <>
-                          {message.is_ai_directed && (
-                            <span className="ai-directed-icon">🎯</span>
-                          )}
+                          {message.is_ai_directed}
                           {message.display_name || "Unknown User"}
                         </>
                       )}
@@ -360,7 +358,7 @@ const ChatBox = ({
                 <div className="message ai thinking-message">
                   <div className="message-header">
                     <span className="message-author">
-                      <span className="ai-badge">🤖 Componion</span>
+                      <span className="ai-badge">Componion</span>
                     </span>
                     <span className="message-time">...</span>
                   </div>
@@ -457,7 +455,6 @@ const ChatBox = ({
                   className="suggestion-item"
                   onClick={() => handleSuggestionClick("at")}
                 >
-                  <span className="suggestion-icon">🤖</span>
                   <span className="suggestion-text">@Componion</span>
                   <span className="suggestion-desc">Ask AI assistant</span>
                 </div>
@@ -465,7 +462,6 @@ const ChatBox = ({
                   className="suggestion-item"
                   onClick={() => handleSuggestionClick("hey")}
                 >
-                  <span className="suggestion-icon">👋</span>
                   <span className="suggestion-text">Hey Componion,</span>
                   <span className="suggestion-desc">Natural conversation</span>
                 </div>
