@@ -210,11 +210,11 @@ const MasterSessionRoom = () => {
     <div className="session-room master-session">
       <div className="session-header demo-header">
         <div className="session-title">
-          <h1>Fake YouTube</h1>
+          <h1>Componion</h1>
         </div>
         <div className="session-actions">
           <button onClick={handleLeaveSession} className="leave-button">
-            Close Demo
+            ×
           </button>
         </div>
       </div>
@@ -252,9 +252,8 @@ const MasterSessionRoom = () => {
           <div className="master-sidebar">
             <div className="chat-panel">
               <div className="chat-header">
-                <h3 className="chat-title">AI Study Assistant</h3>
                 <button className="chat-toggle" onClick={toggleChat}>
-                  ➖
+                  −
                 </button>
               </div>
 
@@ -280,7 +279,7 @@ const MasterSessionRoom = () => {
         {isChatCollapsed && (
           <div className="chat-panel collapsed">
             <button className="chat-toggle" onClick={toggleChat}>
-              💬
+              +
             </button>
           </div>
         )}

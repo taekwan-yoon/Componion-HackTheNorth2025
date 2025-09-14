@@ -51,7 +51,7 @@ const UserList = ({ users, currentUser, isMaster = false }) => {
                     </div>
                   </div>
                   <div className="user-status">
-                    <span className="online-indicator">🟢</span>
+                    <span className="online-indicator">●</span>
                   </div>
                 </div>
               ))}

@@ -237,11 +237,11 @@ const SessionRoom = () => {
     <div className="session-room">
       <div className="session-header">
         <div className="session-title">
-          <h1>{session?.name || "Session Room"}</h1>
-          <span className="session-id">ID: {sessionId}</span>
+          <h1>Componion</h1>
+          <span className="session-id">{session?.name || "Session Room"}</span>
         </div>
         <button onClick={handleLeaveSession} className="leave-button">
-          Leave Session
+          ×
         </button>
       </div>
 

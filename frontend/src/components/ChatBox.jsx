@@ -304,25 +304,6 @@ const ChatBox = ({
 
   return (
     <div className="chat-box">
-      <div className="chat-header">
-        <div className="chat-title">
-          <h3>💬 Chat & AI Assistant</h3>
-          <p className="chat-subtitle">
-            Say "Hey Componion", "Companion", or use @Componion to ask AI
-            questions
-          </p>
-        </div>
-        <div className="connection-status">
-          <span
-            className={`status-indicator ${
-              isConnected ? "connected" : "disconnected"
-            }`}
-          >
-            {isConnected ? "🟢 Connected" : "🔴 Disconnected"}
-          </span>
-        </div>
-      </div>
-
       <div className="messages-container">
         <div className="messages-list">
           {messages.length === 0 && !isThinking ? (
@@ -404,57 +385,59 @@ const ChatBox = ({
       </div>
 
       <div className="chat-input-container">
-        <QueryModeSelector
-          queryMode={queryMode}
-          onQueryModeChange={setQueryMode}
-          startTime={startTime}
-          endTime={endTime}
-          onStartTimeChange={setStartTime}
-          onEndTimeChange={setEndTime}
-          currentVideoTime={currentVideoTime}
-        />
+        <div className="input-controls-row">
+          <QueryModeSelector
+            queryMode={queryMode}
+            onQueryModeChange={setQueryMode}
+            startTime={startTime}
+            endTime={endTime}
+            onStartTimeChange={setStartTime}
+            onEndTimeChange={setEndTime}
+            currentVideoTime={currentVideoTime}
+          />
+          {speechSupported && (
+            <div className="voice-controls">
+              <button
+                type="button"
+                className={`voice-button ${
+                  isTextToSpeechEnabled ? "active" : ""
+                }`}
+                onClick={() =>
+                  setIsTextToSpeechEnabled(!isTextToSpeechEnabled)
+                }
+                title={
+                  isTextToSpeechEnabled
+                    ? "Turn off text-to-speech"
+                    : "Turn on text-to-speech"
+                }
+              >
+                🔉
+              </button>
+
+              <button
+                type="button"
+                className={`voice-button ${isListening ? "listening" : ""}`}
+                onClick={isListening ? stopListening : startListening}
+                disabled={!isConnected}
+                title={isListening ? "Stop listening" : "Start voice input"}
+              >
+                {isListening ? "🔴" : "🎙️"}
+              </button>
+              {isSpeaking && (
+                <button
+                  type="button"
+                  className="voice-button stop-speaking"
+                  onClick={stopSpeaking}
+                  title="Stop speaking"
+                >
+                  ⏹️
+                </button>
+              )}
+            </div>
+          )}
+        </div>
         <form onSubmit={handleSubmit} className="unified-form">
           <div className="input-wrapper">
-            {speechSupported && (
-              <div className="voice-controls">
-                <button
-                  type="button"
-                  className={`voice-button ${
-                    isTextToSpeechEnabled ? "active" : ""
-                  }`}
-                  onClick={() =>
-                    setIsTextToSpeechEnabled(!isTextToSpeechEnabled)
-                  }
-                  title={
-                    isTextToSpeechEnabled
-                      ? "Turn off text-to-speech"
-                      : "Turn on text-to-speech"
-                  }
-                >
-                  {isTextToSpeechEnabled ? "🔊" : "🔇"}
-                </button>
-
-                <button
-                  type="button"
-                  className={`voice-button ${isListening ? "listening" : ""}`}
-                  onClick={isListening ? stopListening : startListening}
-                  disabled={!isConnected}
-                  title={isListening ? "Stop listening" : "Start voice input"}
-                >
-                  {isListening ? "🔴" : "🎤"}
-                </button>
-                {isSpeaking && (
-                  <button
-                    type="button"
-                    className="voice-button stop-speaking"
-                    onClick={stopSpeaking}
-                    title="Stop speaking"
-                  >
-                    🔇
-                  </button>
-                )}
-              </div>
-            )}
             <input
               ref={inputRef}
               type="text"
@@ -462,9 +445,7 @@ const ChatBox = ({
               onChange={handleInputChange}
               placeholder={
                 isConnected
-                  ? speechSupported
-                    ? "Type a message, use 🎤 for voice, say 'Hey Componion', 'Companion' or use @Componion..."
-                    : "Type a message, say 'Hey Componion', 'Companion' or use @Componion..."
+                  ? "Type a message, say 'Hey Componion', 'Companion' or use @Componion..."
                   : "Connecting..."
               }
               disabled={!isConnected}

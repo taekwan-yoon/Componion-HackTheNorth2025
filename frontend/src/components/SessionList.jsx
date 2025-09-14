@@ -186,30 +186,19 @@ const SessionList = ({ onJoinSession, onCreateSession }) => {
       {/* Main Landing Section */}
       <div className="landing-section">
         <div className="landing-content">
-          {/* Left side - Image */}
-          <div className="landing-image">
-            <img
-              src="https://via.placeholder.com/400x300/6366f1/ffffff?text=🎬+Componion"
-              alt="Componion - Watch Together"
-              className="hero-image"
-            />
-            <div className="image-caption">
-              <h1>Welcome to Componion</h1>
-              <p>Watch videos together and chat in real-time with friends!</p>
-            </div>
+          {/* Welcome text */}
+          <div className="welcome-text">
+            <h1>Welcome to Componion</h1>
+            <p>Ask while watching videos</p>
           </div>
 
           {/* Right side - Action buttons */}
           <div className="landing-actions">
-            <h2>Get Started</h2>
-            <p>Choose how you'd like to begin your video session:</p>
-
             <div className="action-buttons">
               <button
                 className="action-button create-button"
                 onClick={() => setShowCreateModal(true)}
               >
-                <div className="button-icon">🎬</div>
                 <div className="button-content">
                   <h3>Create New Session</h3>
                   <p>Start a new video chat room</p>
@@ -220,7 +209,6 @@ const SessionList = ({ onJoinSession, onCreateSession }) => {
                 className="action-button join-button"
                 onClick={handleJoinModeClick}
               >
-                <div className="button-icon">👥</div>
                 <div className="button-content">
                   <h3>Join Existing Session</h3>
                   <p>Browse and join active rooms</p>
@@ -324,14 +312,7 @@ const SessionList = ({ onJoinSession, onCreateSession }) => {
                 disabled={reloading}
                 title="Refresh session list"
               >
-                <span className="reload-icon">🔄</span> Reload
-              </button>
-              <button
-                onClick={handleBackToTop}
-                className="back-button"
-                title="Scroll to top"
-              >
-                ↑ Back to Top
+                ↻
               </button>
             </div>
           </div>
@@ -372,7 +353,7 @@ const SessionList = ({ onJoinSession, onCreateSession }) => {
                       alt="Video thumbnail"
                       onError={(e) => {
                         e.target.src =
-                          "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZTllY2VmIi8+Cjx0ZXh0IHg9IjE1MCIgeT0iMTAwIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiPvCfk7ogVmlkZW88L3RleHQ+Cjwvc3ZnPg==";
+                          "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbGzPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZTllY2VmIi8+Cjx0ZXh0IHg9IjE1MCIgeT0iMTAwIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiPvCfk7ogVmlkZW88L3RleHQ+Cjwvc3ZnPg==";
                       }}
                     />
                   </div>
@@ -383,7 +364,6 @@ const SessionList = ({ onJoinSession, onCreateSession }) => {
 
                   {session.video_url && (
                     <div className="session-video-url">
-                      <span className="video-icon">🎬</span>
                       <span className="video-text">
                         {session.video_url.length > 40
                           ? session.video_url.substring(0, 40) + "..."
@@ -394,7 +374,6 @@ const SessionList = ({ onJoinSession, onCreateSession }) => {
 
                   <div className="session-meta">
                     <div className="meta-item">
-                      <span className="meta-icon">👥</span>
                       <span>
                         {session.user_count} participant
                         {session.user_count !== 1 ? "s" : ""}
@@ -402,7 +381,6 @@ const SessionList = ({ onJoinSession, onCreateSession }) => {
                     </div>
 
                     <div className="meta-item">
-                      <span className="meta-icon">⏰</span>
                       <span>{getTimeAgo(session.created_at)}</span>
                     </div>
 
@@ -413,7 +391,7 @@ const SessionList = ({ onJoinSession, onCreateSession }) => {
                       </div>
                     )} */}
                   </div>
-                </div>
+                }
 
                 <button
                   className="join-session-button"

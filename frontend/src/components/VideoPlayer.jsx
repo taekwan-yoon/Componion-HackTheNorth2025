@@ -531,37 +531,24 @@ const VideoPlayer = ({
       </div>
 
       <div className="video-info-bar">
-        <span className="video-duration">Duration: {videoDuration}</span>
-        <span className="video-format">
-          {isYouTube ? "YouTube" : "MP4"} • 720p
-        </span>
-        <span className="video-url">Source: {finalVideoSource}</span>
+        <div className="video-meta">
+          <span className="video-duration">📹 Duration: {videoDuration}</span>
+          <span className="video-format">
+            {isYouTube ? "🎥 YouTube" : "📁 MP4"} • 720p
+          </span>
+        </div>
+        <div className="video-url-container">
+          <span className="video-url-label">🔗 Source:</span>
+          <input 
+            type="text" 
+            value={finalVideoSource} 
+            readOnly 
+            className="video-url-input"
+            title={finalVideoSource}
+          />
+        </div>
       </div>
 
-      {/* Debug panel */}
-      <div className="video-debug">
-        <details>
-          <summary>Debug Info</summary>
-          <pre>
-            {JSON.stringify(
-              {
-                videoFile,
-                videoUrl,
-                finalVideoSource,
-                isYouTube,
-                isMaster,
-                videoLoading,
-                videoError,
-                sessionName,
-                currentTime,
-                syncTime,
-              },
-              null,
-              2
-            )}
-          </pre>
-        </details>
-      </div>
     </div>
   );
 };
