@@ -29,25 +29,28 @@ def init_socket_events(socketio):
                 # Remove user from session
                 SessionUser.remove_user(session_id, user_id)
                 
-                # If this was the master, remove from session_masters
-                if is_master and session_id in session_masters:
-                    del session_masters[session_id]
-                    emit('master_disconnected', {
-                        'session_id': session_id,
-                        'timestamp': datetime.now().isoformat()
-                    }, room=session_id)
+                # Clean up the user from user_sessions before emitting
+                del user_sessions[user_id]
                 
-                # Notify other users
-                emit('user_left', {
+                # Emit to remaining users in the session
+                socketio.emit('user_left', {
                     'user_id': user_id,
                     'display_name': display_name,
                     'is_master': is_master,
                     'timestamp': datetime.now().isoformat()
                 }, room=session_id)
                 
+                # If this was the master, remove from session_masters
+                if is_master and session_id in session_masters:
+                    del session_masters[session_id]
+                    socketio.emit('master_disconnected', {
+                        'session_id': session_id,
+                        'timestamp': datetime.now().isoformat()
+                    }, room=session_id)
+                
                 # Update user list
                 users = SessionUser.get_session_users(session_id)
-                emit('session_users', users, room=session_id)
+                socketio.emit('session_users', users, room=session_id)
                 
                 # Clean up
                 del user_sessions[user_id]
