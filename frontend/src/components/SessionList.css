@@ -8,6 +8,55 @@
 }
 
 /* Landing Section */
+.welcome-section {
+  padding: var(--space-2xl) var(--space-lg);
+  background: var(--white);
+  margin-bottom: var(--space-xl);
+}
+
+.welcome-content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xl);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.welcome-mascot {
+  width: 150px;
+  height: auto;
+  object-fit: contain;
+}
+
+.welcome-text {
+  flex: 1;
+}
+
+.welcome-text h1 {
+  margin-bottom: var(--space-lg);
+  color: var(--text-primary);
+}
+
+.welcome-buttons {
+  display: flex;
+  gap: var(--space-md);
+}
+
+.welcome-buttons button {
+  padding: var(--space-sm) var(--space-lg);
+  border-radius: var(--radius-md);
+  border: none;
+  background: var(--primary);
+  color: var(--white);
+  cursor: pointer;
+  transition: var(--transition-normal);
+}
+
+.welcome-buttons button:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
 .landing-section {
   min-height: 100vh;
   display: flex;
@@ -21,9 +70,29 @@
   width: 100%;
   max-width: 1200px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: auto 1fr;
   gap: var(--space-2xl);
   align-items: center;
+}
+
+.welcome-mascot {
+  width: 300px;
+  height: auto;
+  margin-bottom: var(--space-xl);
+  display: block;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
 }
 
 /* Left side - Hero Image */

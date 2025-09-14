@@ -46,6 +46,23 @@ const SessionList = ({ onJoinSession, onCreateSession }) => {
     }
   };
 
+  const renderWelcomeSection = () => {
+    return (
+      <div className="welcome-section">
+        <div className="welcome-content">
+          <img src="/mascot.png" alt="Componion Mascot" className="welcome-mascot" />
+          <div className="welcome-text">
+            <h1>Welcome to Componion</h1>
+            <div className="welcome-buttons">
+              <button onClick={() => setMode("create")}>Create New Session</button>
+              <button onClick={() => setMode("join")}>Join Existing Session</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const handleCreateSession = async (e) => {
     e.preventDefault();
     if (!newSessionName.trim()) return;
@@ -197,8 +214,8 @@ const SessionList = ({ onJoinSession, onCreateSession }) => {
       {/* Main Landing Section */}
       <div className="landing-section">
         <div className="landing-content">
-          {/* Welcome text */}
           <div className="welcome-text">
+            <img src="/mascot.png" alt="Componion Mascot" className="welcome-mascot" />
             <h1>Welcome to Componion</h1>
             <p>Ask while watching videos</p>
           </div>
