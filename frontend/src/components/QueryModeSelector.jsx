@@ -80,10 +80,10 @@ const QueryModeSelector = ({
 
   const getModeDisplay = () => {
     switch (queryMode) {
-      case 'omniscient': return { icon: '🌐', name: 'Omniscient', desc: 'Full video' };
-      case 'temporal': return { icon: '⏱️', name: 'Temporal', desc: `Up to ${formatTime(currentVideoTime)}` };
-      case 'window': return { icon: '🎯', name: 'Window', desc: `${formatTime(startTime)}-${formatTime(endTime)}` };
-      default: return { icon: '❓', name: 'Unknown', desc: '' };
+      case 'omniscient': return { icon: '', name: 'Omniscient', desc: 'Full video' };
+      case 'temporal': return { icon: '', name: 'Temporal', desc: `Up to ${formatTime(currentVideoTime)}` };
+      case 'window': return { icon: '', name: 'Window', desc: `${formatTime(startTime)}-${formatTime(endTime)}` };
+      default: return { icon: '', name: 'Unknown', desc: '' };
     }
   };
 
@@ -127,34 +127,34 @@ const QueryModeSelector = ({
           style={{
             top: `${dropdownPosition.top}px`,
             left: `${dropdownPosition.left}px`,
-            width: `${Math.max(dropdownPosition.width, 200)}px`
+            width: `${Math.max(dropdownPosition.width, 300)}px`
           }}
         >
           <div className="mode-option" onClick={() => handleModeChange('omniscient')}>
-            <span className="mode-option-icon">🌐</span>
+            <span className="mode-option-icon"></span>
             <div className="mode-option-content">
               <div className="mode-option-title">Omniscient Mode</div>
               <div className="mode-option-desc">AI knows entire video content</div>
             </div>
-            {queryMode === 'omniscient' && <span className="mode-check">✓</span>}
+            {queryMode === 'omniscient' && <span className="mode-check">•</span>}
           </div>
           
           <div className="mode-option" onClick={() => handleModeChange('temporal')}>
-            <span className="mode-option-icon">⏱️</span>
+            <span className="mode-option-icon"></span>
             <div className="mode-option-content">
               <div className="mode-option-title">Temporal Mode</div>
               <div className="mode-option-desc">Only up to current timestamp</div>
             </div>
-            {queryMode === 'temporal' && <span className="mode-check">✓</span>}
+            {queryMode === 'temporal' && <span className="mode-check">•</span>}
           </div>
           
           <div className="mode-option" onClick={() => handleModeChange('window')}>
-            <span className="mode-option-icon">🎯</span>
+            <span className="mode-option-icon"></span>
             <div className="mode-option-content">
               <div className="mode-option-title">Time Window</div>
               <div className="mode-option-desc">Custom time range</div>
             </div>
-            {queryMode === 'window' && <span className="mode-check">✓</span>}
+            {queryMode === 'window' && <span className="mode-check">•</span>}
           </div>
         </div>
       )}

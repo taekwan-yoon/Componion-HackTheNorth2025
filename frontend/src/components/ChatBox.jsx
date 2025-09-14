@@ -258,24 +258,6 @@ const ChatBox = ({
 
   return (
     <div className="chat-box">
-      <div className="chat-header">
-        <div className="chat-title">
-          <h3>💬 Chat & AI Assistant</h3>
-          <p className="chat-subtitle">
-            Say "Hey Componion", "Companion", or "@Componion" to talk to AI
-          </p>
-        </div>
-        <div className="connection-status">
-          <span
-            className={`status-indicator ${
-              isConnected ? "connected" : "disconnected"
-            }`}
-          >
-            {isConnected ? "🟢 Connected" : "🔴 Disconnected"}
-          </span>
-        </div>
-      </div>
-
       <div className="messages-container">
         <div className="messages-list">
           {messages.length === 0 && !isThinking ? (

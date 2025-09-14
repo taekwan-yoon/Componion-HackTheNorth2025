@@ -5,8 +5,7 @@
   display: flex;
   flex-direction: column;
   background: var(--white);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--platinum);
+  border: 1px solid var(--mint);
   overflow: hidden;
   box-shadow: var(--shadow-md);
 }
@@ -17,8 +16,7 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--space-sm) var(--space-md);
-  background: var(--champagne-pink);
-  border-bottom: 1px solid var(--platinum);
+  background: var(--white);
 }
 
 .chat-title h3 {
@@ -252,9 +250,9 @@
 
 /* Chat Input Container */
 .chat-input-container {
-  padding: var(--space-md) var(--space-lg);
+  padding: var(--space-sm) var(--space-md);
   background: var(--white);
-  border-top: 1px solid var(--platinum);
+  border-top: 2px solid var(--mint);
 }
 
 /* Input Controls Row */
@@ -262,13 +260,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--space-sm);
+  margin-bottom: var(--space-md);
   gap: var(--space-md);
 }
 
 .unified-form {
   display: flex;
-  gap: var(--space-md);
+  gap: var(--space-sm);
   align-items: center;
 }
 
@@ -336,20 +334,21 @@
 /* Input Field */
 .input-wrapper input {
   flex: 1;
+  width: 100%;
   padding: var(--space-md) var(--space-lg);
-  border: 2px solid var(--platinum);
+  border: 2px solid var(--mint);
   border-radius: var(--radius-full);
   font-size: 1rem;
   outline: none;
   transition: var(--transition-fast);
   background: var(--white);
-  color: var(--mountbatten-pink);
+  color: var(--caribbean-current);
   min-width: 0;
 }
 
 .input-wrapper input:focus {
-  border-color: var(--mountbatten-pink);
-  box-shadow: 0 0 0 3px rgba(157, 129, 137, 0.1);
+  border-color: var(--pine-green);
+  box-shadow: 0 0 0 3px rgba(36, 130, 119, 0.2);
 }
 
 .input-wrapper input:disabled {
@@ -420,22 +419,26 @@
 }
 
 .submit-button.send-button {
-  background: var(--platinum);
-  color: var(--mountbatten-pink);
-  min-width: 100px;
+  background: var(--mint);
+  color: var(--caribbean-current);
+  min-width: 60px;
+  padding: var(--space-md) var(--space-md);
+  font-size: 0.9rem;
 }
 
 .submit-button.send-button:hover:not(:disabled) {
-  background: var(--mountbatten-pink);
+  background: var(--pine-green);
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
   color: var(--white);
 }
 
 .submit-button.ai-button {
-  background: var(--mountbatten-pink);
+  background: var(--pine-green);
   color: var(--white);
-  min-width: 100px;
+  min-width: 60px;
+  padding: var(--space-md) var(--space-md);
+  font-size: 0.9rem;
 }
 
 .submit-button.ai-button:hover:not(:disabled) {

@@ -4,6 +4,7 @@
   min-height: 100vh;
   width: 100%;
   position: relative;
+  background: var(--white);
 }
 
 /* Landing Section */
@@ -13,6 +14,7 @@
   align-items: center;
   justify-content: center;
   padding: var(--space-2xl) var(--space-lg);
+  background: var(--white);
 }
 
 .landing-content {
@@ -52,14 +54,14 @@
   font-weight: 700;
   margin-bottom: var(--space-md);
   text-shadow: 0 2px 4px rgba(157, 129, 137, 0.1);
-  color: var(--mountbatten-pink);
+  color: var(--pale-dogwood);
 }
 
 .image-caption p {
   font-size: 1.25rem;
   opacity: 0.9;
   line-height: 1.6;
-  color: var(--mountbatten-pink);
+  color: var(--pale-dogwood);
 }
 
 /* Right side - Actions */
@@ -69,19 +71,19 @@
   padding: var(--space-2xl);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-xl);
-  border: 1px solid rgba(216, 226, 220, 0.3);
+  border: 2px solid var(--mint);
   animation: slideIn 0.8s ease-out 0.2s both;
 }
 
 .landing-actions h2 {
-  color: var(--mountbatten-pink);
+  color: var(--pale-dogwood);
   font-size: 2.5rem;
   margin-bottom: var(--space-md);
   font-weight: 700;
 }
 
 .landing-actions > p {
-  color: var(--mountbatten-pink);
+  color: var(--pale-dogwood);
   font-size: 1.125rem;
   margin-bottom: var(--space-xl);
   line-height: 1.6;
@@ -122,14 +124,14 @@
 
 .button-content h3 {
   margin: 0 0 var(--space-sm) 0;
-  color: var(--mountbatten-pink);
+  color: var(--pale-dogwood);
   font-size: 1.375rem;
   font-weight: 600;
 }
 
 .button-content p {
   margin: 0;
-  color: var(--mountbatten-pink);
+  color: var(--pale-dogwood);
   font-size: 1rem;
   opacity: 0.7;
 }
@@ -141,7 +143,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(157, 129, 137, 0.4);
+  background: rgba(213, 189, 175, 0.4);
   backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
@@ -151,7 +153,7 @@
 }
 
 .modal-content {
-  background: var(--white);
+  background: var(--linen);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-xl);
   max-width: 600px;
@@ -160,7 +162,7 @@
   overflow-y: auto;
   position: relative;
   animation: slideIn 0.3s ease-out;
-  border: 1px solid var(--platinum);
+  border: 1px solid var(--champagne-pink);
 }
 
 .modal-header {
@@ -173,7 +175,7 @@
 }
 
 .modal-header h2 {
-  color: var(--mountbatten-pink);
+  color: var(--pale-dogwood);
   font-size: 1.875rem;
   margin: 0;
   font-weight: 600;
@@ -183,7 +185,7 @@
   background: none;
   border: none;
   font-size: 2rem;
-  color: var(--mountbatten-pink);
+  color: var(--pale-dogwood);
   cursor: pointer;
   padding: var(--space-sm);
   width: 44px;
@@ -223,7 +225,7 @@
 
 .form-group label {
   font-weight: 600;
-  color: var(--mountbatten-pink);
+  color: var(--pale-dogwood);
   font-size: 0.95rem;
 }
 
@@ -234,7 +236,7 @@
   font-size: 1rem;
   transition: var(--transition-fast);
   background: var(--white);
-  color: var(--mountbatten-pink);
+  color: var(--pale-dogwood);
 }
 
 .form-group input:focus {
@@ -255,7 +257,7 @@
   gap: var(--space-sm);
   cursor: pointer;
   font-size: 0.95rem;
-  color: var(--mountbatten-pink);
+  color: var(--pale-dogwood);
 }
 
 .form-actions {
@@ -267,7 +269,7 @@
 .cancel-button {
   padding: var(--space-md) var(--space-xl);
   background: var(--platinum);
-  color: var(--mountbatten-pink);
+  color: var(--pale-dogwood);
   border: 2px solid var(--platinum);
   border-radius: var(--radius-md);
   cursor: pointer;
@@ -338,11 +340,12 @@
 .sessions-header-container {
   max-width: 1200px;
   margin: 0 auto var(--space-2xl) auto;
-  background: linear-gradient(135deg, var(--champagne-pink) 0%, var(--platinum) 100%);
+  background: var(--white);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
-  border: 1px solid rgba(216, 226, 220, 0.3);
+  border: 2px solid var(--mint);
   overflow: hidden;
+  position: relative;
 }
 
 .sessions-header {
@@ -353,14 +356,14 @@
 }
 
 .header-left h2 {
-  color: var(--mountbatten-pink);
+  color: var(--caribbean-current);
   font-size: 2.25rem;
   margin: 0 0 var(--space-sm) 0;
   font-weight: 700;
 }
 
 .header-subtitle {
-  color: var(--mountbatten-pink);
+  color: var(--pine-green);
   font-size: 1rem;
   margin: 0;
   opacity: 0.7;
@@ -386,13 +389,23 @@
 }
 
 .reload-button {
-  background: var(--success);
-  color: var(--white);
+  position: absolute;
+  top: var(--space-sm);
+  right: var(--space-sm);
+  width: 32px;
+  height: 32px;
+  background: var(--uranian-blue);
+  color: var(--french-blue);
   box-shadow: var(--shadow-sm);
+  border-radius: var(--radius-sm);
+  font-size: 16px;
+  padding: 0;
+  justify-content: center;
 }
 
 .reload-button:hover:not(:disabled) {
-  transform: translateY(-1px);
+  background: var(--light-sky-blue);
+  transform: scale(1.1);
   box-shadow: var(--shadow-md);
 }
 
@@ -431,14 +444,14 @@
 }
 
 .no-sessions h3 {
-  color: var(--mountbatten-pink);
+  color: var(--pale-dogwood);
   font-size: 1.75rem;
   margin-bottom: var(--space-md);
   font-weight: 600;
 }
 
 .no-sessions p {
-  color: var(--mountbatten-pink);
+  color: var(--pale-dogwood);
   font-size: 1.125rem;
   margin-bottom: var(--space-xl);
   line-height: 1.6;
@@ -536,7 +549,7 @@
 
 .session-name {
   margin: 0 0 var(--space-md) 0;
-  color: var(--mountbatten-pink);
+  color: var(--pale-dogwood);
   font-size: 1.375rem;
   font-weight: 600;
   word-break: break-word;
@@ -559,7 +572,7 @@
 }
 
 .video-text {
-  color: var(--mountbatten-pink);
+  color: var(--pale-dogwood);
   flex: 1;
   word-break: break-all;
   opacity: 0.8;
@@ -577,7 +590,7 @@
   align-items: center;
   gap: var(--space-sm);
   font-size: 0.9rem;
-  color: var(--mountbatten-pink);
+  color: var(--pale-dogwood);
   opacity: 0.8;
 }
 
@@ -611,7 +624,7 @@
   justify-content: center;
   min-height: 100vh;
   font-size: 1.25rem;
-  color: var(--mountbatten-pink);
+  color: var(--pale-dogwood);
 }
 
 .session-list-loading::after {
@@ -636,6 +649,28 @@
   margin-left: auto;
   margin-right: auto;
   font-weight: 500;
+}
+
+/* Welcome Text Styles */
+.welcome-text {
+  text-align: center;
+  margin-bottom: var(--space-2xl);
+  animation: fadeIn 0.8s ease-out;
+}
+
+.welcome-text h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: var(--space-md);
+  color: var(--caribbean-current);
+  text-shadow: 0 2px 4px rgba(3, 102, 102, 0.1);
+}
+
+.welcome-text p {
+  font-size: 1.25rem;
+  opacity: 0.8;
+  line-height: 1.6;
+  color: var(--pine-green);
 }
 
 /* Animations */

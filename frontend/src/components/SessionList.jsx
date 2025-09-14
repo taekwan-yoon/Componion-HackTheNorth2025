@@ -124,30 +124,6 @@ const SessionList = ({ onJoinSession, onCreateSession }) => {
     }
   };
 
-  const handleBackToTop = () => {
-    const startPosition = window.pageYOffset;
-    const duration = 1000;
-    let startTime = null;
-
-    const easeInOutCubic = (t) => {
-      return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
-    };
-
-    const animation = (currentTime) => {
-      if (startTime === null) startTime = currentTime;
-      const timeElapsed = currentTime - startTime;
-      const progress = Math.min(timeElapsed / duration, 1);
-      const ease = easeInOutCubic(progress);
-      
-      window.scrollTo(0, startPosition * (1 - ease));
-      
-      if (progress < 1) {
-        requestAnimationFrame(animation);
-      }
-    };
-
-    requestAnimationFrame(animation);
-  };
 
   const getVideoThumbnail = (url) => {
     if (!url) return null;
@@ -186,17 +162,10 @@ const SessionList = ({ onJoinSession, onCreateSession }) => {
       {/* Main Landing Section */}
       <div className="landing-section">
         <div className="landing-content">
-          {/* Left side - Image */}
-          <div className="landing-image">
-            <img
-              src="https://via.placeholder.com/450x300/f4acb7/ffffff?text=🎬+Componion"
-              alt="Componion - Watch Together"
-              className="hero-image"
-            />
-            <div className="image-caption">
-              <h1>Welcome to Componion</h1>
-              <p>Watch videos together and chat in real-time with friends!</p>
-            </div>
+          {/* Welcome text */}
+          <div className="welcome-text">
+            <h1>Welcome to Componion</h1>
+            <p>Ask while watching videos</p>
           </div>
 
           {/* Right side - Action buttons */}
@@ -206,7 +175,6 @@ const SessionList = ({ onJoinSession, onCreateSession }) => {
                 className="action-button create-button"
                 onClick={() => setShowCreateModal(true)}
               >
-                <div className="button-icon">🎬</div>
                 <div className="button-content">
                   <h3>Create New Session</h3>
                   <p>Start a new video chat room</p>
@@ -217,7 +185,6 @@ const SessionList = ({ onJoinSession, onCreateSession }) => {
                 className="action-button join-button"
                 onClick={handleJoinModeClick}
               >
-                <div className="button-icon">👥</div>
                 <div className="button-content">
                   <h3>Join Existing Session</h3>
                   <p>Browse and join active rooms</p>
@@ -321,14 +288,7 @@ const SessionList = ({ onJoinSession, onCreateSession }) => {
                 disabled={reloading}
                 title="Refresh session list"
               >
-                <span className="reload-icon">🔄</span> Reload
-              </button>
-              <button
-                onClick={handleBackToTop}
-                className="back-button"
-                title="Scroll to top"
-              >
-                ↑ Back to Top
+                ↻
               </button>
             </div>
           </div>
@@ -380,7 +340,6 @@ const SessionList = ({ onJoinSession, onCreateSession }) => {
 
                   {session.video_url && (
                     <div className="session-video-url">
-                      <span className="video-icon">🎬</span>
                       <span className="video-text">
                         {session.video_url.length > 40
                           ? session.video_url.substring(0, 40) + "..."
@@ -391,7 +350,6 @@ const SessionList = ({ onJoinSession, onCreateSession }) => {
 
                   <div className="session-meta">
                     <div className="meta-item">
-                      <span className="meta-icon">👥</span>
                       <span>
                         {session.user_count} participant
                         {session.user_count !== 1 ? "s" : ""}
@@ -399,7 +357,6 @@ const SessionList = ({ onJoinSession, onCreateSession }) => {
                     </div>
 
                     <div className="meta-item">
-                      <span className="meta-icon">⏰</span>
                       <span>{getTimeAgo(session.created_at)}</span>
                     </div>
 
@@ -416,7 +373,7 @@ const SessionList = ({ onJoinSession, onCreateSession }) => {
                   className="join-session-button"
                   onClick={() => onJoinSession(session)}
                 >
-                  {session.is_master ? "Join Study Session" : "Join Session"}
+                  →
                 </button>
               </div>
             ))}

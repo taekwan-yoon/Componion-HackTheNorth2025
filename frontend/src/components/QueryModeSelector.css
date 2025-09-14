@@ -12,16 +12,17 @@
   align-items: center;
   padding: var(--space-xs) var(--space-sm);
   background: var(--white);
-  border: 2px solid var(--platinum);
+  border: 2px solid var(--mint);
   border-radius: var(--radius-md);
   cursor: pointer;
   transition: var(--transition-fast);
   box-shadow: var(--shadow-sm);
+  min-width: 180px;
 }
 
 .mode-selector-button:hover {
-  background: var(--champagne-pink);
-  border-color: var(--mountbatten-pink);
+  background: var(--celadon);
+  border-color: var(--mint);
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
 }
@@ -74,11 +75,11 @@
 .mode-dropdown {
   position: fixed;
   background: var(--white);
-  border: 1px solid var(--platinum);
+  border: 1px solid var(--mint);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-xl);
   z-index: 9999;
-  min-width: 200px;
+  min-width: 300px;
   max-height: 300px;
   overflow-y: auto;
   overflow-x: hidden;
@@ -99,7 +100,7 @@
 }
 
 .mode-option:hover {
-  background: var(--champagne-pink);
+  background: var(--celadon);
 }
 
 .mode-option-icon {

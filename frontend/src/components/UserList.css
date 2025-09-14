@@ -2,8 +2,7 @@
 
 .user-list {
   background: var(--white);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--platinum);
+  border: 1px solid var(--mint);
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -16,8 +15,7 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--space-sm) var(--space-lg);
-  background: var(--champagne-pink);
-  border-bottom: 1px solid var(--platinum);
+  background: var(--white);
 }
 
 .user-list-header h3 {
@@ -71,14 +69,14 @@
 }
 
 .user-item:hover {
-  background: var(--champagne-pink);
+  background: var(--celadon);
   border-color: var(--mountbatten-pink);
   transform: translateY(-1px);
   box-shadow: var(--shadow-sm);
 }
 
 .user-item.current-user {
-  background: var(--champagne-pink);
+  background: var(--white);
   border-color: var(--mountbatten-pink);
   box-shadow: var(--shadow-sm);
 }
