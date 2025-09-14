@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import "./ChatBox.css";
 import QueryModeSelector from "./QueryModeSelector";
+import { ttsAPI } from "../services/api";
 
 const ChatBox = ({
   messages,
@@ -18,9 +19,9 @@ const ChatBox = ({
   const [speechSupported, setSpeechSupported] = useState(false);
   const [isTextToSpeechEnabled, setIsTextToSpeechEnabled] = useState(false);
   const [isThinking, setIsThinking] = useState(false); // NEW STATE
-  
+
   // Query mode states
-  const [queryMode, setQueryMode] = useState('omniscient'); // 'omniscient', 'temporal', 'window'
+  const [queryMode, setQueryMode] = useState("omniscient"); // 'omniscient', 'temporal', 'window'
   const [startTime, setStartTime] = useState(0);
   const [endTime, setEndTime] = useState(60);
   const messagesEndRef = useRef(null);
@@ -48,7 +49,7 @@ const ChatBox = ({
     console.log("isThinking state changed to:", isThinking);
   }, [isThinking]);
 
-  // Speech synthesis functions
+  // Speech synthesis functions (keeping as fallback)
   const speakText = useCallback(
     (text) => {
       if (synthRef.current && speechSupported && text) {
@@ -78,11 +79,61 @@ const ChatBox = ({
     [speechSupported]
   );
 
+  // Cloudflare TTS functions
+  const speakTextWithCloudflare = useCallback(
+    async (text) => {
+      if (!text || !isTextToSpeechEnabled) return;
+
+      try {
+        setIsSpeaking(true);
+
+        // Call our TTS API
+        const audioBlob = await ttsAPI.textToSpeech(text, "luna");
+
+        // Create blob URL and play audio
+        const audioUrl = URL.createObjectURL(audioBlob);
+        const audio = new Audio(audioUrl);
+
+        audio.onended = () => {
+          setIsSpeaking(false);
+          URL.revokeObjectURL(audioUrl); // Clean up memory
+        };
+
+        audio.onerror = (error) => {
+          console.error("Audio playback error:", error);
+          setIsSpeaking(false);
+          URL.revokeObjectURL(audioUrl);
+        };
+
+        await audio.play();
+      } catch (error) {
+        console.error("TTS error:", error);
+        setIsSpeaking(false);
+
+        // Fallback to browser TTS if Cloudflare fails
+        if (synthRef.current && speechSupported) {
+          console.log("Falling back to browser TTS");
+          speakText(text);
+        }
+      }
+    },
+    [isTextToSpeechEnabled, speechSupported, speakText]
+  );
+
   const stopSpeaking = () => {
+    // Stop browser speech synthesis
     if (synthRef.current) {
       synthRef.current.cancel();
-      setIsSpeaking(false);
     }
+
+    // Stop any currently playing audio
+    const audioElements = document.querySelectorAll("audio");
+    audioElements.forEach((audio) => {
+      audio.pause();
+      audio.currentTime = 0;
+    });
+
+    setIsSpeaking(false);
   };
 
   // Initialize speech services
@@ -124,20 +175,15 @@ const ChatBox = ({
     }
   }, []);
 
-  // Auto-speak AI responses ONLY IF TOGGLE IS ENABLED
+  // Auto-speak AI responses using Cloudflare TTS when enabled
   useEffect(() => {
     if (messages.length > 0) {
       const lastMessage = messages[messages.length - 1];
-      if (
-        lastMessage.message_type === "ai" &&
-        synthRef.current &&
-        speechSupported &&
-        isTextToSpeechEnabled
-      ) {
-        speakText(lastMessage.message);
+      if (lastMessage.message_type === "ai" && isTextToSpeechEnabled) {
+        speakTextWithCloudflare(lastMessage.message);
       }
     }
-  }, [messages, speechSupported, isTextToSpeechEnabled, speakText]);
+  }, [messages, isTextToSpeechEnabled, speakTextWithCloudflare]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });

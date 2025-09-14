@@ -81,9 +81,9 @@ const SessionList = ({ onJoinSession, onCreateSession }) => {
       const timeElapsed = currentTime - startTime;
       const progress = Math.min(timeElapsed / duration, 1);
       const ease = easeInOutCubic(progress);
-      
+
       window.scrollTo(0, startPosition + distance * ease);
-      
+
       if (progress < 1) {
         requestAnimationFrame(animation);
       }
@@ -98,7 +98,7 @@ const SessionList = ({ onJoinSession, onCreateSession }) => {
     const sessionsSection = sessionsRef.current;
     if (sessionsSection) {
       sessionsSection.classList.add("sessions-transitioning");
-      
+
       // Use custom smooth scroll with longer duration
       setTimeout(() => {
         smoothScrollTo(sessionsSection, 1200);
@@ -138,9 +138,9 @@ const SessionList = ({ onJoinSession, onCreateSession }) => {
       const timeElapsed = currentTime - startTime;
       const progress = Math.min(timeElapsed / duration, 1);
       const ease = easeInOutCubic(progress);
-      
+
       window.scrollTo(0, startPosition * (1 - ease));
-      
+
       if (progress < 1) {
         requestAnimationFrame(animation);
       }
@@ -367,12 +367,12 @@ const SessionList = ({ onJoinSession, onCreateSession }) => {
                     <img
                       src={
                         getVideoThumbnail(session.video_url) ||
-                        "https://via.placeholder.com/300x200/e9ecef/666?text=📺+Video"
+                        "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZTllY2VmIi8+Cjx0ZXh0IHg9IjE1MCIgeT0iMTAwIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiPvCfk7ogVmlkZW88L3RleHQ+Cjwvc3ZnPg=="
                       }
                       alt="Video thumbnail"
                       onError={(e) => {
                         e.target.src =
-                          "https://via.placeholder.com/300x200/e9ecef/666?text=📺+Video";
+                          "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZTllY2VmIi8+Cjx0ZXh0IHg9IjE1MCIgeT0iMTAwIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiPvCfk7ogVmlkZW88L3RleHQ+Cjwvc3ZnPg==";
                       }}
                     />
                   </div>
@@ -419,7 +419,7 @@ const SessionList = ({ onJoinSession, onCreateSession }) => {
                   className="join-session-button"
                   onClick={() => onJoinSession(session)}
                 >
-                  {session.is_master ? "Join Study Session" : "Join Session"}
+                  {session.is_master ? "Join Watch Session" : "Join Session"}
                 </button>
               </div>
             ))}

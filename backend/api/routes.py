@@ -1,6 +1,7 @@
-from flask import Blueprint, request, jsonify, send_from_directory
+from flask import Blueprint, request, jsonify, send_from_directory, Response
 from core import Session, SessionUser, ChatMessage, VideoAnalysis, VideoProcessingStatus, VideoTranscript
 from utils.name_generator import generate_random_name, generate_user_id
+from api.tts_api import CloudflareTTSAPI
 from datetime import datetime
 import os
 
@@ -421,4 +422,69 @@ def get_video_transcript(video_url):
         
     except Exception as e:
         print(f"Error getting video transcript: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@api.route('/tts', methods=['POST'])
+def text_to_speech():
+    """Convert text to speech using Cloudflare TTS API"""
+    try:
+        data = request.get_json()
+        
+        if not data or 'text' not in data:
+            return jsonify({'error': 'Text is required'}), 400
+        
+        text = data['text'].strip()
+        if not text:
+            return jsonify({'error': 'Text cannot be empty'}), 400
+        
+        # Optional parameters
+        speaker = data.get('speaker', 'luna')
+        encoding = data.get('encoding', 'linear16')
+        container = data.get('container', 'wav')
+        
+        print(f"TTS request: text='{text[:50]}...', speaker={speaker}")
+        
+        # Initialize TTS API
+        tts_api = CloudflareTTSAPI()
+        
+        # Generate audio
+        audio_data = tts_api.text_to_speech(text, speaker, encoding, container)
+        
+        if audio_data is None:
+            print("TTS generation failed")
+            return jsonify({'error': 'Failed to generate audio'}), 500
+        
+        print(f"TTS generation successful, returning {len(audio_data)} bytes")
+        
+        # Return audio data as response
+        response = Response(
+            audio_data,
+            mimetype='audio/wav',
+            headers={
+                'Content-Disposition': 'attachment; filename=speech.wav',
+                'Content-Type': 'audio/wav',
+                'Access-Control-Allow-Origin': '*'
+            }
+        )
+        
+        return response
+        
+    except Exception as e:
+        print(f"Error generating speech: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@api.route('/tts/speakers', methods=['GET'])
+def get_tts_speakers():
+    """Get available TTS speakers/voices"""
+    try:
+        tts_api = CloudflareTTSAPI()
+        speakers = tts_api.get_available_speakers()
+        
+        return jsonify({
+            'speakers': speakers,
+            'default': 'luna'
+        })
+        
+    except Exception as e:
+        print(f"Error getting TTS speakers: {str(e)}")
         return jsonify({'error': str(e)}), 500

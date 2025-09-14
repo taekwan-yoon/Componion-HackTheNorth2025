@@ -29,7 +29,15 @@ export const sessionAPI = {
   },
 
   // Ask AI question with video timestamp context
-  askAI: async (message, sessionId, userId, videoTimestamp = 0, queryMode = 'omniscient', startTime = null, endTime = null) => {
+  askAI: async (
+    message,
+    sessionId,
+    userId,
+    videoTimestamp = 0,
+    queryMode = "omniscient",
+    startTime = null,
+    endTime = null
+  ) => {
     const response = await api.post("/ask", {
       message: message,
       session_id: sessionId,
@@ -72,6 +80,31 @@ export const videoAPI = {
   getVideoAnalysis: async (videoUrl) => {
     const encodedUrl = encodeURIComponent(videoUrl);
     const response = await api.get(`/video-analysis/${encodedUrl}`);
+    return response.data;
+  },
+};
+
+export const ttsAPI = {
+  // Convert text to speech
+  textToSpeech: async (text, speaker = "luna") => {
+    const response = await api.post(
+      "/tts",
+      {
+        text: text,
+        speaker: speaker,
+        encoding: "linear16",
+        container: "wav",
+      },
+      {
+        responseType: "blob", // Important: tells axios to expect binary data
+      }
+    );
+    return response.data; // This will be a Blob
+  },
+
+  // Get available TTS speakers
+  getSpeakers: async () => {
+    const response = await api.get("/tts/speakers");
     return response.data;
   },
 };
